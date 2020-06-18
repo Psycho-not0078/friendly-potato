@@ -79,9 +79,12 @@ def searchv(data):
     status= {}
     try:
         search_element=data['Search_element']
-        a=Users.objects.filter()
+        a=Users.objects.filter(Vendor__shop_name__contains=search_element)
+        x=list(a.values())
+        for i in range(len(x)):
+            status[i]=x[i]
     except:
-        pass
+        status['stat']="error"
     return status
 
 def corderview():
