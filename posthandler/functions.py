@@ -114,23 +114,29 @@ def edit_profile(data):
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         uid=u.values('uid')
         user=Users.objects.filter(uid__exact=uid)
-        Username=data['Username']
-        Phno=data['Phno']
-        Email_Id=data['Email_Id']
-        Fname=data['Fname']
-        Mname=data['Mname']
-        Lname=data['Lname']
-        Address=data['Address']
-        user.Username=Username
-        user.Phno=Phno
-        user.Email_Id=Email_Id
-        user.Fname=Fname
-        user.Mname=Mname
-        user.Lname=Lname
-        user.Address=Address
+        if(data['Username']):
+            Username=data['Username']
+            user.Username=Username
+        if(data['Phno']):
+            Phno=data['Phno']
+            user.Phno=Phno
+        if(data['Email_Id']):
+            Email_Id=data['Email_Id']
+            user.Email_Id=Email_Id
+        if(data['Fname']):
+            Fname=data['Fname']
+            user.Fname=Fname
+        if(data['Mname']):
+            Mname=data['Mname']
+            user.Mname=Mname
+        if(data['Lname']):
+            Lname=data['Lname']
+            user.Lname=Lname
+        if(data['Address']):
+            Address=data['Address']
+            user.Address=Address
+
         user.save()
-
-
 
         status['stat']="success"
     except :
