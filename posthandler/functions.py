@@ -103,7 +103,39 @@ def vorderview():
         pass
     return status
 
+
 def locate():
     status= {}
     return status
+
+def edit_profile(data):
+    status= {}
+    try:
+        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        uid=u.values('uid')
+        user=Users.objects.filter(uid__exact=uid)
+        Username=data['Username']
+        Phno=data['Phno']
+        Email_Id=data['Email_Id']
+        Fname=data['Fname']
+        Mname=data['Mname']
+        Lname=data['Lname']
+        Address=data['Address']
+        user.Username=Username
+        user.Phno=Phno
+        user.Email_Id=Email_Id
+        user.Fname=Fname
+        user.Mname=Mname
+        user.Lname=Lname
+        user.Address=Address
+        user.save()
+
+
+
+        status['stat']="success"
+    except :
+        status['stat']="fail"
+    
+    return status
+
 
