@@ -75,6 +75,15 @@ def order():
     status= {}
     return status
 
+def searchv(data):
+    status= {}
+    try:
+        search_element=data['Search_element']
+        a=Users.objects.filter()
+    except:
+        pass
+    return status
+
 def corderview():
     status= {}
     try:
