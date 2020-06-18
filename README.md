@@ -1,2 +1,2 @@
 # friendly-potato
-django server for a serving APIs.
+django server for a serving APIs
