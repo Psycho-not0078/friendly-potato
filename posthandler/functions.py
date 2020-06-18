@@ -126,9 +126,37 @@ def corderview():
 def vorderview():
     status= {}
     try:
-        pass
+        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        vid=u.values('uid')
+        order=order_details.objects.filter(vid__exact=vid)
+        o=list(order.values())
+        for i in range(len(o)):
+            detail={}
+            u=user.object.filter(vid__exact=o[i]['cid'])
+            user=list(v.values())
+            user_name=ven[0]['Usrname']
+            it=ord.object.filter(oid__exact=o[i]['oid'])
+            items=list(it.values())
+            item={'items':[],'qty':[],'cost':[]}
+            for j in range(len(items)):
+                temp=items.object.filter(iid__exact=items[j]['iid'])
+                l=list(temp.values())
+                item['items'].append(l[0]['Item_Name'])
+                item['cost'].append(l[0]['Cost'])
+                item['qty'].append(items[j]['qty'])
+
+            detail['items']=item
+            detail['u_name']=user_name
+            detail['order_id']=o[i]['oid']
+            detail['customer_id']=o[i]['cid']
+            detail['time']=o[i]['time']
+            detail['delivery_id']=o[i]['did']
+            detail['paymnt_method']=o[i]['paymnt_method']
+            detail['status']=o[i]['order_stat']
+            detail['total_cost']=o[i]['total_cost']
+            status[i]=detail
     except :
-        pass
+        status['stat']="Some error ocurred"
     return status
 
 
