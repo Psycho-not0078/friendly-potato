@@ -7,7 +7,7 @@ from.AEScipher import AESCipher
 def APIfunct(data):
     headdder=data.headers.get('Action')
     if(headdder=="Sign_Up"):
-        status=HttpResponse(sign_in(data))
+        status=HttpResponse(s9jign_in(data))
     elif(headdder=="Sign_In"):
         status=HttpResponse(sign_up(data))
     return status
@@ -69,6 +69,8 @@ def APIgen(string,uid):
 
 def sign_up(data):
     status= {}
+    user=Users(usrname=data['Username'],passwd=data['Password'],phno=data['Phone_no'],email_id=data['Email_Id'],type=data['Type'])
+    user.save()
     return status
 
 def order():
@@ -80,13 +82,22 @@ def searchv(data):
     try:
         search_element=data['Search_element']
         a=Users.objects.filter(Vendor__shop_name__contains=search_element)
-        x=list(a.values())
+        x=list(a.values('lat','lon','address','Vendor__shop_name','phno','Vendor__vid'))
         for i in range(len(x)):
             status[i]=x[i]
     except:
         status['stat']="error"
     return status
 
+def view_vendor(data):
+    status={}
+    try:
+        vendor_id=data['Vid']
+        d=Users.objects.filter(Vendor__vid=vendor_id)
+        x=list(a.values('Vendor__vid','Vendor'))
+    except:
+        status['stat']="error"
+    return status
 def corderview():
     status= {}
     try:
