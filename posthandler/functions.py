@@ -2,12 +2,13 @@ from django.http import HttpResponse
 from .models import *
 import os
 from.AEScipher import AESCipher
+from Crypto.Cipher import AES
 
 
 def APIfunct(data):
     headdder=data.headers.get('Action')
     if(headdder=="Sign_Up"):
-        status=HttpResponse(s9jign_in(data))
+        status=HttpResponse(sign_in(data))
     elif(headdder=="Sign_In"):
         status=HttpResponse(sign_up(data))
     return status
@@ -59,8 +60,11 @@ def sign_in(data):
     return status
 
 def APIgen(string,uid):
+    key = '0123456789abcdef'
+    IV = 16 * '\x00'           # Initialization vector: discussed later
+    mode = AES.MODE_CBC
+    encryptor = AES.new(key, mode, IV=IV)
     key=os.urandom(256)
-    c=AESCipher(key)
     encstr=c.encrypt(string)
 
     c=Users.objects.filter(uid__exact=uid).update(api_key=key)
@@ -98,7 +102,7 @@ def view_vendor(data):
     except:
         status['stat']="error"
     return status
-def corderview():
+def corderview(data):
     status= {}
     try:
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
@@ -146,15 +150,15 @@ def vorderview():
             u=user.object.filter(vid__exact=o[i]['cid'])
             user=list(v.values())
             user_name=ven[0]['Usrname']
-            it=ord.object.filter(oid__exact=o[i]['oid'])
-            items=list(it.values())
+            it=ord.object.filter(oid__exact=o[i]['oid'])#selet * into #temp from ord where oid=oid
+            items=list(it.values('iid'))#selet * from #temp      select iid from temp
             item={'items':[],'qty':[],'cost':[]}
+            item['qty']=list(it.values('qty'))
             for j in range(len(items)):
-                temp=items.object.filter(iid__exact=items[j]['iid'])
+                temp=items.object.filter(iid__exact=items[j])
                 l=list(temp.values())
                 item['items'].append(l[0]['Item_Name'])
                 item['cost'].append(l[0]['Cost'])
-                item['qty'].append(items[j]['qty'])
 
             detail['items']=item
             detail['u_name']=user_name
@@ -171,8 +175,12 @@ def vorderview():
     return status
 
 
-def locate():
+def locate(data):
     status= {}
+    try:
+        pass
+    except expression as identifier:
+        pass
     return status
 
 def edit_profile(data):
