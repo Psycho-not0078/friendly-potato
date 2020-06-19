@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 17, 2020 at 05:34 PM
+-- Generation Time: Jun 19, 2020 at 03:50 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.6
 
@@ -391,10 +391,10 @@ CREATE TABLE `items` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ord`
+-- Table structure for table `order`
 --
 
-CREATE TABLE `ord` (
+CREATE TABLE `order` (
   `oid` int(11) NOT NULL,
   `iid` int(11) NOT NULL,
   `qty` float NOT NULL
@@ -411,7 +411,7 @@ CREATE TABLE `order_details` (
   `cid` int(11) NOT NULL,
   `vid` int(11) NOT NULL,
   `time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
-  `did` int(11) NOT NULL,
+  `did` int(11) DEFAULT NULL,
   `paymnt_method` varchar(30) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Cash',
   `order_stat` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Ongoing',
   `total_cost` float NOT NULL DEFAULT 0
@@ -420,10 +420,10 @@ CREATE TABLE `order_details` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `reviews/rating`
+-- Table structure for table `reviews_rating`
 --
 
-CREATE TABLE `reviews/rating` (
+CREATE TABLE `reviews_rating` (
   `cid` int(11) NOT NULL,
   `vid` int(11) NOT NULL,
   `review` text NOT NULL,
@@ -464,7 +464,6 @@ CREATE TABLE `users` (
   `Type` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `date of join` datetime NOT NULL DEFAULT current_timestamp(),
   `api_key` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
-  `iv` text COLLATE utf8_unicode_ci NOT NULL,
   `updated_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
   `verified` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -603,9 +602,9 @@ ALTER TABLE `items`
   ADD PRIMARY KEY (`iid`);
 
 --
--- Indexes for table `ord`
+-- Indexes for table `order`
 --
-ALTER TABLE `ord`
+ALTER TABLE `order`
   ADD PRIMARY KEY (`oid`,`iid`),
   ADD KEY `item1` (`iid`);
 
@@ -619,9 +618,9 @@ ALTER TABLE `order_details`
   ADD KEY `f` (`did`);
 
 --
--- Indexes for table `reviews/rating`
+-- Indexes for table `reviews_rating`
 --
-ALTER TABLE `reviews/rating`
+ALTER TABLE `reviews_rating`
   ADD PRIMARY KEY (`cid`,`vid`),
   ADD KEY `vendor2` (`vid`);
 
@@ -800,16 +799,16 @@ ALTER TABLE `django_admin_log`
   ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 --
--- Constraints for table `ord`
+-- Constraints for table `order`
 --
-ALTER TABLE `ord`
+ALTER TABLE `order`
   ADD CONSTRAINT `item1` FOREIGN KEY (`iid`) REFERENCES `items` (`iid`),
   ADD CONSTRAINT `order1` FOREIGN KEY (`oid`) REFERENCES `order_details` (`Oid`);
 
 --
--- Constraints for table `reviews/rating`
+-- Constraints for table `reviews_rating`
 --
-ALTER TABLE `reviews/rating`
+ALTER TABLE `reviews_rating`
   ADD CONSTRAINT `customer2` FOREIGN KEY (`cid`) REFERENCES `customers` (`Cid`),
   ADD CONSTRAINT `vendor2` FOREIGN KEY (`vid`) REFERENCES `vendor` (`Vid`);
 

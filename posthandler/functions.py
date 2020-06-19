@@ -102,6 +102,7 @@ def view_vendor(data):
     except:
         status['stat']="error"
     return status
+    
 def corderview(data):
     status= {}
     try:
