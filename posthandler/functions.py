@@ -109,31 +109,31 @@ def corderview(data):
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         uid=u.values('uid')
         order=order_details.objects.filter(cid__exact=uid)
-        o=list(order.values())
-        for i in range(len(o)):
+        o_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
+        for i in range(len(o_list)):
             detail={}
             v=Vendor.object.filter(vid__exact=o[i]['vid'])
-            ven=list(v.values())
+            ven=list(v.values(Shop_Name))
             vendor_name=ven[0]['Shop_Name']
-            it=ord.object.filter(oid__exact=o[i]['oid'])
-            items=list(it.values())
-            item={'items':[],'qty':[],'cost':[]}
-            for j in range(len(items)):
-                temp=items.object.filter(iid__exact=items[j]['iid'])
-                l=list(temp.values())
-                item['items'].append(l[0]['Item_Name'])
-                item['cost'].append(l[0]['Cost'])
-                item['qty'].append(items[j]['qty'])
+            item_detail=order.object.filter(oid__exact=o[i]['oid'])
+            item_detail_list=list(item_detail.values())
+            item_res={'items':[],'qty':[],'cost':[]}
+            for j in range(len(item_detail_list)):
+                temp=items.object.filter(iid__exact=item_detail_list[j]['iid'])
+                l=list(temp.values('Item_Name','Cost','qty'))
+                item_res['items'].append(l[0]['Item_Name'])
+                item_res['qty'].append(item_detail_list[j]['qty'])
+                item_res['cost'].append(l[0]['Cost'])
 
-            detail['items']=item
+            detail['items']=item_res
             detail['v_name']=vendor_name
-            detail['order_id']=o[i]['oid']
-            detail['customer_id']=o[i]['cid']
-            detail['time']=o[i]['time']
-            detail['delivery_id']=o[i]['did']
-            detail['paymnt_method']=o[i]['paymnt_method']
-            detail['status']=o[i]['order_stat']
-            detail['total_cost']=o[i]['total_cost']
+            detail['order_id']=o_list[i]['oid']
+            detail['customer_id']=o_list[i]['cid']
+            detail['time']=o_list[i]['time']
+            detail['delivery_id']=o_list[i]['did']
+            detail['paymnt_method']=o_list[i]['paymnt_method']
+            detail['status']=o_list[i]['order_stat']
+            detail['total_cost']=o_list[i]['total_cost']
             status[i]=detail
     except :
         status['stat']="Some error ocurred"
@@ -145,31 +145,31 @@ def vorderview():
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         vid=u.values('uid')
         order=order_details.objects.filter(vid__exact=vid)
-        o=list(order.values())
-        for i in range(len(o)):
+        order_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
+        for i in range(len(order_list)):
             detail={}
-            u=user.object.filter(vid__exact=o[i]['cid'])
-            user=list(v.values())
+            ven=user.object.filter(vid__exact=order_list[i]['cid'])
+            user=list(v.values('Usrname'))
             user_name=ven[0]['Usrname']
-            it=ord.object.filter(oid__exact=o[i]['oid'])#selet * into #temp from ord where oid=oid
-            items=list(it.values('iid'))#selet * from #temp      select iid from temp
-            item={'items':[],'qty':[],'cost':[]}
-            item['qty']=list(it.values('qty'))
-            for j in range(len(items)):
+            item_detail=ord.object.filter(oid__exact=order_list[i]['oid'])#selet * into #temp from ord where oid=oid
+            item_detail_list=list(item_detail.values('iid'))#selet * from #temp      select iid from temp
+            item_res={'items':[],'qty':[],'cost':[]}
+            for j in range(len(item_detail_list)):
                 temp=items.object.filter(iid__exact=items[j])
                 l=list(temp.values())
-                item['items'].append(l[0]['Item_Name'])
-                item['cost'].append(l[0]['Cost'])
+                item_res['items'].append(l[0]['Item_Name'])
+                item_res['qty'].append(item_detail_list[j]['qty'])
+                item_res['cost'].append(l[0]['Cost'])
 
-            detail['items']=item
+            detail['items']=item_res
             detail['u_name']=user_name
-            detail['order_id']=o[i]['oid']
-            detail['customer_id']=o[i]['cid']
-            detail['time']=o[i]['time']
-            detail['delivery_id']=o[i]['did']
-            detail['paymnt_method']=o[i]['paymnt_method']
-            detail['status']=o[i]['order_stat']
-            detail['total_cost']=o[i]['total_cost']
+            detail['order_id']=order_list[i]['oid']
+            detail['customer_id']=order_list[i]['cid']
+            detail['time']=order_list[i]['time']
+            detail['delivery_id']=order_list[i]['did']
+            detail['paymnt_method']=order_list[i]['paymnt_method']
+            detail['status']=order_list[i]['order_stat']
+            detail['total_cost']=order_list[i]['total_cost']
             status[i]=detail
     except :
         status['stat']="Some error ocurred"
