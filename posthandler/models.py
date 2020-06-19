@@ -173,14 +173,14 @@ class Items(models.Model):
         db_table = 'items'
 
 
-class Ord(models.Model):
+class Order(models.Model):
     oid = models.OneToOneField('OrderDetails', models.DO_NOTHING, db_column='oid', primary_key=True)
     iid = models.ForeignKey(Items, models.DO_NOTHING, db_column='iid')
     qty = models.FloatField()
 
     class Meta:
         managed = False
-        db_table = 'ord'
+        db_table = 'order'
         unique_together = (('oid', 'iid'),)
 
 
@@ -207,7 +207,7 @@ class ReviewsRating(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'reviews/rating'
+        db_table = 'reviews_rating'
         unique_together = (('cid', 'vid'),)
 
 
@@ -239,7 +239,6 @@ class Users(models.Model):
     type = models.CharField(db_column='Type', max_length=10)  # Field name made lowercase.
     date_of_join = models.DateTimeField(db_column='date of join')  # Field renamed to remove unsuitable characters.
     api_key = models.CharField(max_length=30)
-    iv = models.TextField()
     updated_time = models.DateTimeField()
     verified = models.IntegerField()
 

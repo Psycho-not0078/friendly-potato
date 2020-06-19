@@ -111,7 +111,7 @@ def corderview(data):
         o=list(order.values())
         for i in range(len(o)):
             detail={}
-            v=vendor.object.filter(vid__exact=o[i]['vid'])
+            v=Vendor.object.filter(vid__exact=o[i]['vid'])
             ven=list(v.values())
             vendor_name=ven[0]['Shop_Name']
             it=ord.object.filter(oid__exact=o[i]['oid'])
