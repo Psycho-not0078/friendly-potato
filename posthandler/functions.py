@@ -77,8 +77,41 @@ def sign_up(data):
     user.save()
     return status
 
-def order():
+def order(data):
     status= {}
+    try:
+        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        vid=u.values('uid')
+        c_id=data['cid']
+        order=data['order']
+        o_id=data['oid']
+        items=order['item_name']
+        quantity=order['qty']
+        item_iid=[]
+        item_cost=[]
+        for i in items:
+            temp=items.object.filter(Item_Name__exact=i)
+            i_id=temp.values('iid')
+            i_cost=temp.values('cost')
+            items_iid.append(i_id)
+            item_cost.append(i_cost)
+        t_cost=0;
+        for i in range(len(quantity)):
+            t_cost=t_cost+(item_cost[i]*quantity[i])
+
+        for i in range(len(item_iid)):
+            t1=Order(oid=o_id,iid=item_iid[i],qty=quantity[i])
+            t1.save()
+
+        t2=OrderDetails(oid=o_id,cid=c_id,vid=vid,total_cost=t_cost)
+        t2.save()
+
+        for i in range(len(item_iid)):
+            s=Stock.object.filter(vid__exact=vid).filter(iid_exact=item_iid[i])
+            s.units=s.values('units')-quantity[i]
+
+    except:
+        status['stat']="error"
     return status
 
 def searchv(data):
