@@ -81,23 +81,29 @@ def order(data):
     status= {}
     try:
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
-        vid=u.values('uid')
-        c_id=data['cid']
+        c_id=u.values('uid')
+        a=Users.objects.filter(Vendor__shop_name__exact=search_element)
+        vid=a.values('uid')
         order=data['order']
-        #o_id=data['oid'] a=order_details(cid=...,vid=...,payt)
         items=order['item_name']
         quantity=order['qty']
         item_iid=[]
         item_cost=[]
+        t_cost=0;
+        for i in range(len(quantity)):
+            t_cost=t_cost+(item_cost[i]*quantity[i])
+
+        t2=OrderDetails(cid=c_id,vid=vid,total_cost=t_cost)
+        t2.save()
+        temp=OrderDetails.object.latest('time')
+        o_id=temp.values('oid')
         for i in items:
             temp=items.object.filter(Item_Name__exact=i)
             i_id=temp.values('iid')
             i_cost=temp.values('cost')
             items_iid.append(i_id)
             item_cost.append(i_cost)
-        t_cost=0;
-        for i in range(len(quantity)):
-            t_cost=t_cost+(item_cost[i]*quantity[i])
+        
 
         for i in range(len(item_iid)):
             t1=Order(oid=o_id,iid=item_iid[i],qty=quantity[i])
@@ -140,7 +146,7 @@ def view_vendor(data):
 def corderview(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password']
+        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         uid=u.values('uid')
         order=order_details.objects.filter(cid__exact=uid)
         o_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
