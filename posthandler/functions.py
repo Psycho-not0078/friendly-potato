@@ -60,7 +60,7 @@ def sign_in(data):
     return status
 
 def APIgen(string,uid):
-    key = '0123456789abcdef'
+    key = os.urandom(256)
     IV = 16 * '\x00'           # Initialization vector: discussed later
     mode = AES.MODE_CBC
     encryptor = AES.new(key, mode, IV=IV)
@@ -84,7 +84,7 @@ def order(data):
         vid=u.values('uid')
         c_id=data['cid']
         order=data['order']
-        o_id=data['oid']
+        #o_id=data['oid'] a=order_details(cid=...,vid=...,payt)
         items=order['item_name']
         quantity=order['qty']
         item_iid=[]
@@ -109,6 +109,7 @@ def order(data):
         for i in range(len(item_iid)):
             s=Stock.object.filter(vid__exact=vid).filter(iid_exact=item_iid[i])
             s.units=s.values('units')-quantity[i]
+            s.save()
 
     except:
         status['stat']="error"
@@ -139,7 +140,7 @@ def view_vendor(data):
 def corderview(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password']
         uid=u.values('uid')
         order=order_details.objects.filter(cid__exact=uid)
         o_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
