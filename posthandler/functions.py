@@ -23,7 +23,6 @@ def review(data):
         vid=u.values('vid')
         review=data['Review']
         ratings=data['Rating']
-
         rev=ReviewsRating(cid=uid,vid=vid,review=review,rating=ratings)
         rev.save()
         status['stat']="success"
@@ -189,10 +188,10 @@ def corderview(data):
         o_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
         for i in range(len(o_list)):
             detail={}
-            v=Vendor.object.filter(vid__exact=o[i]['vid'])
+            v=Vendor.object.filter(vid__exact=o_list[i]['vid'])
             ven=list(v.values('Shop_Name'))
             vendor_name=ven[0]['Shop_Name']
-            item_detail=order.object.filter(oid__exact=o[i]['oid'])
+            item_detail=order.object.filter(oid__exact=o_list[i]['oid'])
             item_detail_list=list(item_detail.values())
             item_res={'items':[],'qty':[],'cost':[]}
             for j in range(len(item_detail_list)):
@@ -232,7 +231,7 @@ def vorderview(data):
             item_detail_list=list(item_detail.values('iid'))#selet * from #temp      select iid from temp
             item_res={'items':[],'qty':[],'cost':[]}
             for j in range(len(item_detail_list)):
-                temp=items.object.filter(iid__exact=items[j])
+                temp=items.object.filter(iid__exact=item_detail_list[j])
                 l=list(temp.values())
                 item_res['items'].append(l[0]['Item_Name'])
                 item_res['qty'].append(item_detail_list[j]['qty'])
