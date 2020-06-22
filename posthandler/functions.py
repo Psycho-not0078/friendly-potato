@@ -4,6 +4,8 @@ import os
 from.AEScipher import AESCipher
 from Crypto.Cipher import AES
 from Crypto import Random
+from datetime import datetime;
+from datetime import timedelta;
 
 
 def APIfunct(data):
@@ -50,9 +52,10 @@ def verify(data):
         key=u.values('api_key')
         iv=u.values('iv')
         cipher = AES.new(key, AES.MODE_CBC, iv)
-        expression=""
+        time_old=u.values('updated_time')
+        time_10mins=timedelta(minutes=10)
         if(cipher.decrypt(data['cipher'])==ptext):
-            if expression:#condition to check time pased
+            if (datetime.now()-time_old<time_10mins):#condition to check time pased
                 status['resp']=="success"
             else:
                 status=renew(data)
@@ -169,6 +172,32 @@ def searchv(data):
         status['stat']="error"
     return status
 
+def stock(data):
+    status={}
+    try:
+        v=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        vid=v.values('vid')
+        item_name=data['item_name']
+        item_indb=Items.objects.filter(Item_Name__exact=item_name)
+        ico=item_indb.count()
+        if(ico==1):
+            item_id=item_indb.values('iid')
+            item_instock=Stock.objects.filter(iid__exact=item_id)
+            item_instock.values('qty')+=data['qty']
+            item_instock.save()
+        else:
+            add_initem=Items(item_name=data['item_name'],company=data['company_name'],cost=data['item_cost'])
+            add_initem.save()
+            item_detail=Items.objects.filter(Item_Name__exact=data['item_name'])
+            i_id=item_detail.values('iid')
+            add_instock=Stock(vid=vid,iid=i_id,units=data['qty'])
+            add_instock.save()
+
+        status['stat']='success'
+    except :
+        status['stat']='error'
+
+
 def view_vendor(data):
     status={}
     try:
@@ -184,7 +213,7 @@ def corderview(data):
     try:
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         uid=u.values('uid')
-        order=order_details.objects.filter(cid__exact=uid)
+        order=OrderDetails.objects.filter(cid__exact=uid)
         o_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
         for i in range(len(o_list)):
             detail={}
@@ -220,7 +249,7 @@ def vorderview(data):
     try:
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         vid=u.values('uid')
-        order=order_details.objects.filter(vid__exact=vid)
+        order=OrderDetails.objects.filter(vid__exact=vid)
         order_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
         for i in range(len(order_list)):
             detail={}

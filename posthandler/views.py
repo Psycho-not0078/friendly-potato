@@ -31,12 +31,10 @@ def index(request):
                     response=order(data.copy())    
                 if headder=='':
                     response=(data.copy())
-
                 elif headder=="...":
                     response=asdfg()
                 
             
-
         res=HttpResponse(response)
         res['cipher']=response['hash']#the string used for api authication
         
