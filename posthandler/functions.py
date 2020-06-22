@@ -8,9 +8,9 @@ from Crypto import Random
 
 def APIfunct(data):
     headdder=data.headers.get('Action')
-    if(headdder=="Sign_Up"):
+    if(headdder=="Sign_In"):
         status=HttpResponse(sign_in(data))
-    elif(headdder=="Sign_In"):
+    elif(headdder=="Sign_Up"):
         status=HttpResponse(sign_up(data))
     return status
 
@@ -34,8 +34,14 @@ def review(data):
 
 
 def asdfg():
-
-    return "null"
+    status=[]
+    status.append(".__                    .__         .__  .__  _____    _________    __                               .__                   __  .__                                              .__               ")
+    status.append("|  |__   ______  _  __ |__| ______ |  | |__|/ ____\___\_____   \ _/  |________ ___.__.  __ __  _____|__| ____    ____   _/  |_|  |__   ____   _____  ______ ______        ____ |__|____    ____  ")
+    status.append("|  |  \ /  _ \ \/ \/ / |  |/  ___/ |  | |  \   __\/ __ \ /   __/ \   __\_  __ <   |  | |  |  \/  ___/  |/    \  / ___\  \   __\  |  \_/ __ \  \__  \ \____ \\____ \     _/ ___\|  \__  \  /  _ \ ")
+    status.append("|   Y  (  <_> )     /  |  |\___ \  |  |_|  ||  | \  ___/|   |     |  |  |  | \/\___  | |  |  /\___ \|  |   |  \/ /_/  >  |  | |   Y  \  ___/   / __ \|  |_> >  |_> >    \  \___|  |/ __ \(  <_> )")
+    status.append("|___|  /\____/ \/\_/   |__/____  > |____/__||__|  \___  >___|     |__|  |__|   / ____| |____//____  >__|___|  /\___  /   |__| |___|  /\___  > (____  /   __/|   __/ /\   \___  >__(____  /\____/ ")
+    status.append("     \/                        \/                     \/<___>                  \/                 \/        \//_____/              \/     \/       \/|__|   |__|    \/       \/        \/        ")
+    return status
 
 def verify(data):
     status= {}
@@ -51,6 +57,7 @@ def verify(data):
                 status['resp']=="success"
             else:
                 status=renew(data)
+                status['resp']=="success"
     except:
         status['stat']='fail'
     return status
@@ -58,7 +65,9 @@ def verify(data):
 def renew(data):
     status= {}
     try:
-        pass
+        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        hash=APIgen(u.values('email'),u.values('uid'))
+        status['hash']=hash
     except:
         status['stat']='fail'
     return status
@@ -78,6 +87,18 @@ def sign_in(data):
 
     return status
 
+def sign_up(data):
+    status= {}
+    try:
+        user=Users(usrname=data['Username'],passwd=data['Password'],phno=data['Phone_no'],email_id=data['Email_Id'],type=data['Type'])
+        user.save()
+        hash=APIgen(u.values('email'),u.values('uid'))
+        status['hash']=hash
+    except:
+        status['stat']="error"
+    return status
+
+
 def APIgen(string,uid):
     key = os.urandom(16)
     iv = Random.new().read(AES.block_size)       # Initialization vector: discussed later
@@ -91,11 +112,6 @@ def APIgen(string,uid):
     return ret
 
 
-def sign_up(data):
-    status= {}
-    user=Users(usrname=data['Username'],passwd=data['Password'],phno=data['Phone_no'],email_id=data['Email_Id'],type=data['Type'])
-    user.save()
-    return status
 
 def order(data):
     status= {}
@@ -200,7 +216,7 @@ def corderview(data):
         status['stat']="Some error ocurred"
     return status
 
-def vorderview():
+def vorderview(data):
     status= {}
     try:
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
@@ -240,9 +256,15 @@ def vorderview():
 def locate(data):
     status= {}
     try:
-        pass
-    except expression as identifier:
-        pass
+        search_element1=data['Fname']
+        search_element2=data['Mname']
+        search_element3=data['Lname']
+        a=Users.objects.filter(fname__exact=search_element1).filter(mname__exact=search_element2).filter(lname__exact=search_element3)
+        x=list(a.values('lat','lon','address','phno',))
+        for i in range(len(x)):
+            status[i]=x[i]
+    except:
+        status['stat']="error"
     return status
 
 def edit_profile(data):
@@ -281,4 +303,15 @@ def edit_profile(data):
     
     return status
 
-
+#         _            _            _      
+#        /\ \         /\ \         /\ \    
+#       /  \ \       /  \ \       /  \ \   
+#      / /\ \ \     / /\ \ \     / /\ \ \  
+#     / / /\ \_\   / / /\ \ \   / / /\ \_\ 
+#    / /_/_ \/_/  / / /  \ \_\ / /_/_ \/_/ 
+#   / /____/\    / / /   / / // /____/\    
+#  / /\____\/   / / /   / / // /\____\/    
+# / / /______  / / /___/ / // / /          
+#/ / /_______\/ / /____\/ // / /           
+#\/__________/\/_________/ \/_/            
+                                          

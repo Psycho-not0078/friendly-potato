@@ -189,7 +189,7 @@ class OrderDetails(models.Model):
     cid = models.IntegerField()
     vid = models.IntegerField()
     time = models.DateTimeField()
-    did = models.IntegerField()
+    did = models.IntegerField(blank=True, null=True)
     paymnt_method = models.CharField(max_length=30)
     order_stat = models.CharField(max_length=10)
     total_cost = models.FloatField()
@@ -239,6 +239,7 @@ class Users(models.Model):
     type = models.CharField(db_column='Type', max_length=10)  # Field name made lowercase.
     date_of_join = models.DateTimeField(db_column='date of join')  # Field renamed to remove unsuitable characters.
     api_key = models.CharField(max_length=30)
+    iv = models.IntegerField()
     updated_time = models.DateTimeField()
     verified = models.IntegerField()
 
