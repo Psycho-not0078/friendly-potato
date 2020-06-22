@@ -107,7 +107,7 @@ def APIgen(string,uid):
     mode = AES.MODE_CBC
     cipher = AES.new(key,mode,iv)
     encstr=cipher.encrypt(string)
-    ret=base64.b64encode(iv + encstr)
+    ret=base64.b64encode(encstr)
 
     c=Users.objects.filter(uid__exact=uid).update(api_key=key)
     d=Users.objects.filter(uid__exact=uid).update(iv=iv)
