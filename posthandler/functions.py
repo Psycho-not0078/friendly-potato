@@ -3,6 +3,7 @@ from .models import *
 import os
 from.AEScipher import AESCipher
 from Crypto.Cipher import AES
+from Crypto import Random
 
 
 def APIfunct(data):
@@ -38,10 +39,28 @@ def asdfg():
 
 def verify(data):
     status= {}
+    try:
+        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        ptext=u.values('email')
+        key=u.values('api_key')
+        iv=u.values('iv')
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        expression=""
+        if(cipher.decrypt(data['cipher'])==ptext):
+            if expression:#condition to check time pased
+                status['resp']=="success"
+            else:
+                status=renew(data)
+    except:
+        status['stat']='fail'
     return status
 
 def renew(data):
     status= {}
+    try:
+        pass
+    except:
+        status['stat']='fail'
     return status
 
 def sign_in(data):
@@ -60,15 +79,16 @@ def sign_in(data):
     return status
 
 def APIgen(string,uid):
-    key = os.urandom(256)
-    IV = 16 * '\x00'           # Initialization vector: discussed later
+    key = os.urandom(16)
+    iv = Random.new().read(AES.block_size)       # Initialization vector: discussed later
     mode = AES.MODE_CBC
-    encryptor = AES.new(key, mode, IV=IV)
-    key=os.urandom(256)
-    encstr=c.encrypt(string)
+    cipher = AES.new(key,mode,iv)
+    encstr=cipher.encrypt(string)
+    ret=base64.b64encode(iv + encstr)
 
     c=Users.objects.filter(uid__exact=uid).update(api_key=key)
-    return encstr
+    d=Users.objects.filter(uid__exact=uid).update(iv=iv)
+    return ret
 
 
 def sign_up(data):
@@ -80,6 +100,7 @@ def sign_up(data):
 def order(data):
     status= {}
     try:
+        search_element=data['Shop_name']
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         c_id=u.values('uid')
         a=Users.objects.filter(Vendor__shop_name__exact=search_element)
@@ -101,7 +122,7 @@ def order(data):
             temp=items.object.filter(Item_Name__exact=i)
             i_id=temp.values('iid')
             i_cost=temp.values('cost')
-            items_iid.append(i_id)
+            item_iid.append(i_id)
             item_cost.append(i_cost)
         
 
@@ -153,7 +174,7 @@ def corderview(data):
         for i in range(len(o_list)):
             detail={}
             v=Vendor.object.filter(vid__exact=o[i]['vid'])
-            ven=list(v.values(Shop_Name))
+            ven=list(v.values('Shop_Name'))
             vendor_name=ven[0]['Shop_Name']
             item_detail=order.object.filter(oid__exact=o[i]['oid'])
             item_detail_list=list(item_detail.values())

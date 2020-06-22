@@ -19,9 +19,11 @@ def index(request):
             if(stat['resp']=="success"):
                 if headder=="review":
                     response=review(data.copy())
-
                 if headder=='Search_Vendor':
                     response=searchv(data.copy())
+                if headder=='':
+                    response=(data.copy())
+
                 elif headder=="...":
                     response=asdfg()
                 
