@@ -19,7 +19,7 @@ def verify(data):
     try:
         u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         ptext=u.values('email')
-        key=u.values('api_key')
+        key=u.values('API_KEY')
         iv=u.values('iv')
         cipher = AES.new(key, AES.MODE_CBC, iv)
         time_old=u.values('updated_time')

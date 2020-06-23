@@ -55,7 +55,7 @@ def vorderview(data):
             item_detail_list=list(item_detail.values('iid'))#selet * from #temp      select iid from temp
             item_res={'items':[],'qty':[],'cost':[]}
             for j in range(len(item_detail_list)):
-                temp=items.object.filter(iid__exact=item_detail_list[j])
+                temp=Items.object.filter(iid__exact=item_detail_list[j])
                 l=list(temp.values())
                 item_res['items'].append(l[0]['Item_Name'])
                 item_res['qty'].append(item_detail_list[j]['qty'])
