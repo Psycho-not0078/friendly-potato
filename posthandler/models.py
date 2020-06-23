@@ -34,6 +34,7 @@ class DeliveryPersonal(models.Model):
 class Stock(models.Model):
     vid = models.OneToOneField('Vendor', models.DO_NOTHING, db_column='Vid', primary_key=True)  # Field name made lowercase.
     iid = models.ForeignKey('Items', models.DO_NOTHING, db_column='iid')
+    cost = models.FloatField()
     units = models.FloatField()
 
     class Meta:

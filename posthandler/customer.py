@@ -33,8 +33,8 @@ def order(data):
         a=Users.objects.filter(Vendor__shop_name__exact=search_element)
         vid=a.values('uid')
         order=data['order']
-        items=order['item_name']
-        quantity=order['qty']
+        items=data['item_name']
+        quantity=data['qty']
         item_iid=[]
         item_cost=[]
         t_cost=0;
@@ -82,12 +82,41 @@ def searchv(data):
     return status
 
 def view_vendor(data):
-    status=[]
+    status={}
     try:
         vendor_id=data['Vid']
-        d=Users.objects.filter(Vendor__vid=vendor_id)
-        x=dict(d.values('Vendor__vid','Vendor__Shop_name','address'))
-        status=x
+        if data.headers.get('action')=="Description":
+            d=Vendor.objects.filter(Vendor__vid=vendor_id)
+            des=d.values('description')
+            status['returns']=des
+
+
+        elif data.headers.get('action')=="Reviews":
+            d=ReviewsRating.objects.filter(vid__exact=vendor_id)
+            reviews=[]
+            cnt=d.count()
+            review=[]
+            rev=list(d.values('review','rating'))
+            cids=list(d.values('cid'))
+            for i in range(cnt):
+                n=Users.object.filter(uid__exact=cids[i])
+                fnm = n.values('fname')
+                mnm = n.values('mname')
+                lnmn = n.values('lname')
+                reviews.append([fnm,mnm,lnmn,rev[i][0],rev[i][1]])
+            status['returns']=reviews
+
+        elif data.headers.get('action')=="Items":
+            it=Stock.objects.filter(vid__exact=vendor_id)
+            cnt=it.count()
+            retitems=[]
+            item_cost=list(it.values('cost'))
+            tem=list(it.values('iid'))
+            for i in range(cnt):
+                em=Items.object.filter(iid__exact=tem[i])
+                item_details=list(em.values())
+                retitems.append(tem[i],item_details,item_cost[i])
+            status['returns']=retitems
     except:
         status['stat']="error"
     return status
@@ -108,7 +137,7 @@ def corderview(data):
             item_detail_list=list(item_detail.values())
             item_res={'items':[],'qty':[],'cost':[]}
             for j in range(len(item_detail_list)):
-                temp=items.object.filter(iid__exact=item_detail_list[j]['iid'])
+                temp=Items.object.filter(iid__exact=item_detail_list[j]['iid'])
                 l=list(temp.values('Item_Name','Cost','qty'))
                 item_res['items'].append(l[0]['Item_Name'])
                 item_res['qty'].append(item_detail_list[j]['qty'])

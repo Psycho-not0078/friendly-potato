@@ -49,9 +49,9 @@ def vorderview(data):
         for i in range(len(order_list)):
             detail={}
             ven=user.object.filter(vid__exact=order_list[i]['cid'])
-            user=list(v.values('Usrname'))
+            user=list(ven.values('Usrname'))
             user_name=ven[0]['Usrname']
-            item_detail=ord.object.filter(oid__exact=order_list[i]['oid'])#selet * into #temp from ord where oid=oid
+            item_detail=order.object.filter(oid__exact=order_list[i]['oid'])#selet * into #temp from ord where oid=oid
             item_detail_list=list(item_detail.values('iid'))#selet * from #temp      select iid from temp
             item_res={'items':[],'qty':[],'cost':[]}
             for j in range(len(item_detail_list)):
