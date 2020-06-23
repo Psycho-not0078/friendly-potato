@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from .models import *
 import os
-from.AEScipher import AESCipher
 from Crypto.Cipher import AES
 from datetime import datetime;
 from datetime import timedelta;
@@ -118,3 +117,16 @@ def edit_profile(data):
         status['stat']="fail"
     
     return status
+
+#         _            _            _      
+#        /\ \         /\ \         /\ \    
+#       /  \ \       /  \ \       /  \ \   
+#      / /\ \ \     / /\ \ \     / /\ \ \  
+#     / / /\ \_\   / / /\ \ \   / / /\ \_\ 
+#    / /_/_ \/_/  / / /  \ \_\ / /_/_ \/_/ 
+#   / /____/\    / / /   / / // /____/\    
+#  / /\____\/   / / /   / / // /\____\/    
+# / / /______  / / /___/ / // / /          
+#/ / /_______\/ / /____\/ // / /           
+#\/__________/\/_________/ \/_/            
+                                    

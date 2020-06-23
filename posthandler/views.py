@@ -5,6 +5,7 @@ from .models import * #the database connect
 import datetime 
 from .functions import *
 from .userfunct import *
+from .customer import *
 
 
 def index(request):
