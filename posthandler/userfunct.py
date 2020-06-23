@@ -3,7 +3,6 @@ from .models import *
 import os
 from.AEScipher import AESCipher
 from Crypto.Cipher import AES
-from Crypto import Random
 from datetime import datetime;
 from datetime import timedelta;
 
@@ -74,7 +73,7 @@ def sign_up(data):
 
 def APIgen(string,uid):
     key = os.urandom(16)
-    iv = Random.new().read(AES.block_size)      
+    iv = os.urandom(AES.block_size)      
     mode = AES.MODE_CBC
     cipher = AES.new(key,mode,iv)
     encstr=cipher.encrypt(string)

@@ -1,9 +1,7 @@
 from django.http import HttpResponse
 from .models import *
 import os
-from.AEScipher import AESCipher
 from Crypto.Cipher import AES
-from Crypto import Random
 from datetime import datetime;
 from datetime import timedelta;
 
@@ -99,30 +97,24 @@ def stock(data):
     status={}
     try:
         v=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
-        vid=v.values('vid')
-        item_name=data['item_name']
-        item_indb=Items.objects.filter(Item_Name__contains=item_name)
-        ico=item_indb.count()
-        if(ico==1):
-            if(Stock.objects.filter(iid__exact=item_id).filter(vid__exact=vid).count()>=1):
-                item_id=item_indb.values('iid')
-                item_instock=Stock.objects.filter(iid__exact=item_id).filter(vid__exact=vid)
-                item_instock.qty=item_instock.values('qty')+data['qty']
-                item_instock.save()
-            #else:
-
-
-        else:
-            add_initem=Items(item_name=data['item_name'],company=data['company_name'],cost=data['item_cost'])
-            add_initem.save()
-            item_detail=Items.objects.filter(Item_Name__exact=data['item_name'])
-            i_id=item_detail.values('iid')
-            add_instock=Stock(vid=vid,iid=i_id,units=data['qty'])
-            add_instock.save()
-
+        Vid=v.values('vid')
+        tnitem=data['Number']
+        dit=dict(data.items())
+        for i in range(tnitem):
+            current_item="Item_"+str(i)
+            qty=dit[current_item][2]
+            iname=dit[current_item][0]
+            icompany=dit[current_item][1]
+            a=Items.objects.filter(item_name__exact=iname).filter(company__exact=icompany)
+            if(a.count()!=1):
+                d=Items(name=iname,company=icompany,description=dit[current_item][3])
+                d.save()
+            s=Stock(vid=Vid,iid=a.values('iid'),units=qty)
+            s.save()
         status['stat']='success'
     except :
         status['stat']='error'
+    return status
 
 
 def view_vendor(data):
