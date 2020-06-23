@@ -117,6 +117,8 @@ def view_vendor(data):
                 item_details=list(em.values())
                 retitems.append(tem[i],item_details,item_cost[i])
             status['returns']=retitems
+
+            
     except:
         status['stat']="error"
     return status

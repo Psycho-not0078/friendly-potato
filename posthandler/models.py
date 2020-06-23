@@ -233,14 +233,15 @@ class Users(models.Model):
     fname = models.CharField(db_column='Fname', max_length=30)  # Field name made lowercase.
     mname = models.CharField(db_column='Mname', max_length=30)  # Field name made lowercase.
     lname = models.CharField(db_column='Lname', max_length=30)  # Field name made lowercase.
-    lat = models.FloatField(db_column='Lat')  # Field name made lowercase.
-    lon = models.FloatField(db_column='Lon')  # Field name made lowercase.
+    lat = models.FloatField(db_column='Lat', blank=True, null=True)  # Field name made lowercase.
+    lon = models.FloatField(db_column='Lon', blank=True, null=True)  # Field name made lowercase.
     address = models.TextField(db_column='Address')  # Field name made lowercase.
     online = models.IntegerField(db_column='Online')  # Field name made lowercase.
     type = models.CharField(db_column='Type', max_length=10)  # Field name made lowercase.
     date_of_join = models.DateTimeField(db_column='date of join')  # Field renamed to remove unsuitable characters.
-    api_key = models.CharField(max_length=30)
-    iv = models.IntegerField()
+    pt = models.TextField()
+    api_key = models.TextField(blank=True, null=True)
+    iv = models.TextField()
     updated_time = models.DateTimeField()
     verified = models.IntegerField()
 

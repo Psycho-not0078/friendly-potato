@@ -12,34 +12,34 @@ def index(request):
     if request.method=="POST":
         data=request.POST.copy()
         response={}
-        headder=data.headers.get('Action')
-        if(headder=="Sign_in" or headder=="Sign_up"):
-            response=APIfunct(data.copy())
+        headder=data.get('Action')
+        if(headder=="Sign_In" or headder=="Sign_Up"):
+            response=APIfunct(data)
         else:
             stat={}
             stat=verify(data.copy)
             if(stat['resp']=="success"):
                 if headder=="review":
-                    response=review(data.copy())
+                    response=review(data)
                 if headder=='Search_Vendor':
-                    response=searchv(data.copy())
+                    response=searchv(data)
                 if headder=='Locate':
-                    response=locate(data.copy())
+                    response=locate(data)
                 if headder=='Customer_View_Order':
-                    response=corderview(data.copy())
+                    response=corderview(data)
                 if headder=='Vendor_View_Order':
-                    response=vorderview(data.copy())
+                    response=vorderview(data)
                 if headder=='Order_place':
-                    response=order(data.copy())    
+                    response=order(data)    
                 if headder=='':
-                    response=(data.copy())
+                    response=(data)
                 elif headder=="...":
                     response=asdfg()
                 
             
         res=HttpResponse(response)
-        res['cipher']=response['hash']#the string used for api authication
-        
+        #res['cipher']=response['hash']#the string used for api authication
+        print(response)
 
         #print(type(a[0]['tt']))
         return res
