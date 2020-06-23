@@ -64,7 +64,8 @@ def sign_up(data):
     try:
         user=Users(usrname=data['Username'],passwd=data['Password'],phno=data['Phone_no'],email_id=data['Email_Id'],type=data['Type'])
         user.save()
-        hash=APIgen(u.values('email'),u.values('uid'))
+        Use=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        hash=APIgen(Use.values('email'),Use.values('uid'))
         status['hash']=hash
     except:
         status['stat']="error"
