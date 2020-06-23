@@ -4,6 +4,7 @@ from django.db import models
 from .models import * #the database connect
 import datetime 
 from .functions import *
+from .userfunct import *
 
 
 def index(request):

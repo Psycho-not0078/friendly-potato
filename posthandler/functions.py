@@ -8,13 +8,6 @@ from datetime import datetime;
 from datetime import timedelta;
 
 
-def APIfunct(data):
-    headdder=data.headers.get('Action')
-    if(headdder=="Sign_In"):
-        status=HttpResponse(sign_in(data))
-    elif(headdder=="Sign_Up"):
-        status=HttpResponse(sign_up(data))
-    return status
 
 def review(data):
     status={}
@@ -43,76 +36,6 @@ def asdfg():
     status.append("|___|  /\____/ \/\_/   |__/____  > |____/__||__|  \___  >___|     |__|  |__|   / ____| |____//____  >__|___|  /\___  /   |__| |___|  /\___  > (____  /   __/|   __/ /\   \___  >__(____  /\____/ ")
     status.append("     \/                        \/                     \/<___>                  \/                 \/        \//_____/              \/     \/       \/|__|   |__|    \/       \/        \/        ")
     return status
-
-def verify(data):
-    status= {}
-    try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
-        ptext=u.values('email')
-        key=u.values('api_key')
-        iv=u.values('iv')
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        time_old=u.values('updated_time')
-        time_10mins=timedelta(minutes=10)
-        if(cipher.decrypt(data['cipher'])==ptext):
-            if (datetime.now()-time_old<time_10mins):#condition to check time pased
-                status['resp']=="success"
-            else:
-                status=renew(data)
-                status['resp']=="success"
-    except:
-        status['stat']='fail'
-    return status
-
-def renew(data):
-    status= {}
-    try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
-        hash=APIgen(u.values('email'),u.values('uid'))
-        status['hash']=hash
-    except:
-        status['stat']='fail'
-    return status
-
-def sign_in(data):
-    status= {}
-    try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
-        uco=u.count()
-        if(uco==1):
-            hash=APIgen(u.values('email'),u.values('uid'))
-            status['hash']=hash
-        else:
-            status['stat']="wrong_login"
-    except:
-        status['stat']="error"
-
-    return status
-
-def sign_up(data):
-    status= {}
-    try:
-        user=Users(usrname=data['Username'],passwd=data['Password'],phno=data['Phone_no'],email_id=data['Email_Id'],type=data['Type'])
-        user.save()
-        hash=APIgen(u.values('email'),u.values('uid'))
-        status['hash']=hash
-    except:
-        status['stat']="error"
-    return status
-
-
-def APIgen(string,uid):
-    key = os.urandom(16)
-    iv = Random.new().read(AES.block_size)       # Initialization vector: discussed later
-    mode = AES.MODE_CBC
-    cipher = AES.new(key,mode,iv)
-    encstr=cipher.encrypt(string)
-    ret=base64.b64encode(encstr)
-
-    c=Users.objects.filter(uid__exact=uid).update(api_key=key)
-    d=Users.objects.filter(uid__exact=uid).update(iv=iv)
-    return ret
-
 
 
 def order(data):
@@ -178,13 +101,17 @@ def stock(data):
         v=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
         vid=v.values('vid')
         item_name=data['item_name']
-        item_indb=Items.objects.filter(Item_Name__exact=item_name)
+        item_indb=Items.objects.filter(Item_Name__contains=item_name)
         ico=item_indb.count()
         if(ico==1):
-            item_id=item_indb.values('iid')
-            item_instock=Stock.objects.filter(iid__exact=item_id)
-            item_instock.values('qty')+=data['qty']
-            item_instock.save()
+            if(Stock.objects.filter(iid__exact=item_id).filter(vid__exact=vid).count()>=1):
+                item_id=item_indb.values('iid')
+                item_instock=Stock.objects.filter(iid__exact=item_id).filter(vid__exact=vid)
+                item_instock.qty=item_instock.values('qty')+data['qty']
+                item_instock.save()
+            #else:
+
+
         else:
             add_initem=Items(item_name=data['item_name'],company=data['company_name'],cost=data['item_cost'])
             add_initem.save()
@@ -295,41 +222,7 @@ def locate(data):
         status['stat']="error"
     return status
 
-def edit_profile(data):
-    status= {}
-    try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
-        uid=u.values('uid')
-        user=Users.objects.filter(uid__exact=uid)
-        if(data['Username']):
-            Username=data['Username']
-            user.Username=Username
-        if(data['Phno']):
-            Phno=data['Phno']
-            user.Phno=Phno
-        if(data['Email_Id']):
-            Email_Id=data['Email_Id']
-            user.Email_Id=Email_Id
-        if(data['Fname']):
-            Fname=data['Fname']
-            user.Fname=Fname
-        if(data['Mname']):
-            Mname=data['Mname']
-            user.Mname=Mname
-        if(data['Lname']):
-            Lname=data['Lname']
-            user.Lname=Lname
-        if(data['Address']):
-            Address=data['Address']
-            user.Address=Address
 
-        user.save()
-
-        status['stat']="success"
-    except :
-        status['stat']="fail"
-    
-    return status
 
 #         _            _            _      
 #        /\ \         /\ \         /\ \    
