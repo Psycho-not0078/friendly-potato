@@ -9,12 +9,12 @@ from datetime import timedelta;
 def review(data):
     status={}
     try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         uid=u.values('uid')
-        v=Users.objects.filter(Vendor__shop_name=data['Shop_name'])
+        v=Users.objects.filter(Vendor__shop_name=data.POST['Shop_name'])
         vid=u.values('vid')
-        review=data['Review']
-        ratings=data['Rating']
+        review=data.POST['Review']
+        ratings=data.POST['Rating']
         rev=ReviewsRating(cid=uid,vid=vid,review=review,rating=ratings)
         rev.save()
         status['stat']="success"
@@ -27,14 +27,14 @@ def review(data):
 def order(data):
     status= {}
     try:
-        search_element=data['Shop_name']
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        search_element=data.POST['Shop_name']
+        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         c_id=u.values('uid')
         a=Users.objects.filter(Vendor__shop_name__exact=search_element)
         vid=a.values('uid')
-        order=data['order']
-        items=data['item_name']
-        quantity=data['qty']
+        order=data.POST['order']
+        items=data.POST['item_name']
+        quantity=data.POST['qty']
         item_iid=[]
         item_cost=[]
         t_cost=0;
@@ -67,24 +67,26 @@ def order(data):
 
     except:
         status['stat']="error"
+        status['error']=traceback.format_exc()
     return status
 
 def searchv(data):
     status= {}
     try:
-        search_element=data['Search_element']
+        search_element=data.POST['Search_element']
         a=Users.objects.filter(Vendor__shop_name__contains=search_element)
         x=list(a.values('lat','lon','address','Vendor__shop_name','phno','Vendor__vid'))
         for i in range(len(x)):
             status[i]=x[i]
     except:
         status['stat']="error"
+        status['error']=traceback.format_exc()
     return status
 
 def view_vendor(data):
     status={}
     try:
-        vendor_id=data['Vid']
+        vendor_id=data.POST['Vid']
         if data.headers.get('action')=="Description":
             d=Vendor.objects.filter(Vendor__vid=vendor_id)
             des=d.values('description')
@@ -121,12 +123,13 @@ def view_vendor(data):
             
     except:
         status['stat']="error"
+        status['error']=traceback.format_exc()
     return status
     
 def corderview(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         uid=u.values('uid')
         order=OrderDetails.objects.filter(cid__exact=uid)
         o_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))

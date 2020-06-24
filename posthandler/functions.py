@@ -19,9 +19,9 @@ def asdfg():
 def stock(data):
     status={}
     try:
-        v=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        v=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         Vid=v.values('vid')
-        tnitem=data['Number']
+        tnitem=data.POST['Number']
         dit=dict(data.items())
         for i in range(tnitem):
             current_item="Item_"+str(i)
@@ -42,7 +42,7 @@ def stock(data):
 def vorderview(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data['Username']).filter(passwd__exact=data['Password'])
+        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         vid=u.values('uid')
         order=OrderDetails.objects.filter(vid__exact=vid)
         order_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
@@ -79,15 +79,16 @@ def vorderview(data):
 def locate(data):
     status= {}
     try:
-        search_element1=data['Fname']
-        search_element2=data['Mname']
-        search_element3=data['Lname']
+        search_element1=data.POST['Fname']
+        search_element2=data.POST['Mname']
+        search_element3=data.POST['Lname']
         a=Users.objects.filter(fname__exact=search_element1).filter(mname__exact=search_element2).filter(lname__exact=search_element3)
         x=list(a.values('lat','lon','address','phno',))
         for i in range(len(x)):
             status[i]=x[i]
     except:
         status['stat']="error"
+        status['error']=traceback.format_exc()
     return status
 
 

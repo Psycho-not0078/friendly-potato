@@ -1,45 +1,50 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.db import models
 from .models import * #the database connect
 import datetime 
 from .functions import *
 from .userfunct import *
 from .customer import *
-
+from django.utils import *
+import json
 
 def index(request):
     if request.method=="POST":
         data=request.POST.copy()
         response={}
-        headder=data.get('Action')
+        headder=request.META.get('HTTP_ACTION')
+        #print(headder)
+        #print(type(headder))
         if(headder=="Sign_In" or headder=="Sign_Up"):
-            response=APIfunct(data)
+            print(asdfg)
+            response=APIfunct(request,headder)
         else:
             stat={}
-            stat=verify(data.copy)
-            if(stat['resp']=="success"):
+            stat=verify(request)
+            print (stat)
+            if(stat['response']=="success"):
                 if headder=="review":
-                    response=review(data)
+                    response=review(request)
                 if headder=='Search_Vendor':
-                    response=searchv(data)
+                    response=searchv(request)
                 if headder=='Locate':
-                    response=locate(data)
+                    response=locate(request)
                 if headder=='Customer_View_Order':
-                    response=corderview(data)
+                    response=corderview(request)
                 if headder=='Vendor_View_Order':
-                    response=vorderview(data)
-                if headder=='Order_place':
-                    response=order(data)    
+                    response=vorderview(request)
+                if headder=='Order_Place':
+                    response=order(request)    
                 if headder=='':
-                    response=(data)
+                    response=(request)
                 elif headder=="...":
                     response=asdfg()
                 
             
-        res=HttpResponse(response)
+        res=JsonResponse(response)
+        print(res.content)
         #res['cipher']=response['hash']#the string used for api authication
-        print(response)
 
         #print(type(a[0]['tt']))
         return res
