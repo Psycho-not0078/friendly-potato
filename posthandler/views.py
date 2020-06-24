@@ -20,10 +20,9 @@ def index(request):
             print(asdfg)
             response=APIfunct(request,headder)
         else:
-            stat={}
             stat=verify(request)
             print (stat)
-            if(stat['response']=="success"):
+            if(stat['resp']=="success"):
                 if headder=="review":
                     response=review(request)
                 if headder=='Search_Vendor':

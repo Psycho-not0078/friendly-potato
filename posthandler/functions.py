@@ -19,7 +19,7 @@ def asdfg():
 def stock(data):
     status={}
     try:
-        v=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        v=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         Vid=v.values('vid')
         tnitem=data.POST['Number']
         dit=dict(data.items())
@@ -42,7 +42,7 @@ def stock(data):
 def vorderview(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         vid=u.values('uid')
         order=OrderDetails.objects.filter(vid__exact=vid)
         order_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))

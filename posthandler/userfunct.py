@@ -20,28 +20,42 @@ def APIfunct(data,string1):
 def verify(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        print("running")
+        #print(data.META.get('HTTP_USERNAME'))
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         ptext=u.values('pt')
-        key=u.values('API_KEY')
-        iv=u.values('iv')
-        cipher = AES.new(key, AES.MODE_CBC, iv)
+        key=base64.b64decode(u.values('api_key')[0]['api_key'])
+        iv=base64.b64decode(u.values('iv')[0]['iv'])
+        mode = AES.MODE_CBC
+        cipher = AES.new(key, mode ,iv)
+        print(type(key))
+        print(key)
+
+        #print(data.META)
+        print(cipher.decrypt(base64.b64decode((data.META.get('HTTP_CIPHER')))))
+        #print(data.META)
         time_old=u.values('updated_time')
         time_10mins=timedelta(minutes=10)
-        if(cipher.decrypt(base64.b64decode(data.POST['Cipher']))==ptext):
-            if (datetime.now()-time_old<time_10mins):#condition to check time pased
+        if(cipher.decrypt(base64.b64decode((data.META.get('HTTP_CIPHER'))))==ptext[0]['pt']):
+            print("asdg")
+            if ((datetime.now()-time_old)<time_10mins):#condition to check time pased
+                print("still running")
                 status['resp']=="success"
             else:
                 status=renew(data)
-                status['response']=="success"
+                print("nah")
+                status['resp']=="success"
     except:
+        print("fail")
         status['stat']='fail'
+        status['resp']="fail"
         traceback.print_exc()
     return status
 
 def renew(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         hash=APIgen(u.values('uid'))
         status['hash']=hash
     except:
@@ -51,7 +65,7 @@ def renew(data):
 def sign_in(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         uco=u.count()
         if(uco==1):
             p=u.values('uid')[0]['uid']
@@ -86,6 +100,8 @@ def sign_up(data):
         user.verified=0
         user.iv=0
         user.pt=" "
+        user.api_key=" "
+        user.iv=" "
         user.save()
         Use=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         #print("fuyu")
@@ -93,7 +109,7 @@ def sign_up(data):
         #print(s)
         hash=APIgen(s[0]['uid'])
         status['stat']="success"
-        status['hash']=hash.decode("utf-8")
+        status['hash']=hash.decode('UTF-8')
         #status['resp']="skip"
     except:
         status['stat']="error"
@@ -104,6 +120,8 @@ def sign_up(data):
 def APIgen(uid):
     key = os.urandom(16)
     iv = os.urandom(AES.block_size)  
+    print(AES.block_size)
+    print(iv)
     strings= os.urandom(AES.block_size)    
     mode = AES.MODE_CBC
     cipher = AES.new(key,mode,iv)
@@ -111,9 +129,9 @@ def APIgen(uid):
     ret=base64.b64encode(encstr)
 
     c=Users.objects.filter(uid__exact=uid)
-    c.update(api_key=key)
-    c.update(iv=iv)
-    c.update(pt=strings)
+    c.update(api_key=base64.b64encode(key).decode('UTF-8'))
+    c.update(iv=base64.b64encode(iv).decode('UTF-8'))
+    c.update(pt=base64.b64encode(strings).decode('UTF-8'))
 
     #c.save()
 
@@ -122,7 +140,7 @@ def APIgen(uid):
 def edit_profile(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         uid=u.values('uid')
         user=Users.objects.filter(uid__exact=uid)
         if(data.POST['Username']):

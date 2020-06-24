@@ -9,7 +9,7 @@ from datetime import timedelta;
 def review(data):
     status={}
     try:
-        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         uid=u.values('uid')
         v=Users.objects.filter(Vendor__shop_name=data.POST['Shop_name'])
         vid=u.values('vid')
@@ -28,7 +28,7 @@ def order(data):
     status= {}
     try:
         search_element=data.POST['Shop_name']
-        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         c_id=u.values('uid')
         a=Users.objects.filter(Vendor__shop_name__exact=search_element)
         vid=a.values('uid')
@@ -81,6 +81,7 @@ def searchv(data):
     except:
         status['stat']="error"
         status['error']=traceback.format_exc()
+    print(status)
     return status
 
 def view_vendor(data):
@@ -129,7 +130,7 @@ def view_vendor(data):
 def corderview(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         uid=u.values('uid')
         order=OrderDetails.objects.filter(cid__exact=uid)
         o_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
