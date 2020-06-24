@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 23, 2020 at 06:11 PM
+-- Generation Time: Jun 24, 2020 at 06:56 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.6
 
@@ -470,8 +470,8 @@ CREATE TABLE `users` (
   `Online` tinyint(1) NOT NULL DEFAULT 0,
   `Type` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
   `date of join` datetime NOT NULL DEFAULT current_timestamp(),
-  `pt` text COLLATE utf8_unicode_ci NOT NULL DEFAULT '\'" "\'',
-  `api_key` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `pt` text COLLATE utf8_unicode_ci NOT NULL,
+  `api_key` text COLLATE utf8_unicode_ci NOT NULL,
   `iv` text COLLATE utf8_unicode_ci NOT NULL,
   `updated_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `verified` tinyint(1) NOT NULL DEFAULT 0
@@ -482,7 +482,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`Uid`, `Usrname`, `Passwd`, `Phno`, `Email_Id`, `Fname`, `Mname`, `Lname`, `Lat`, `Lon`, `Address`, `Online`, `Type`, `date of join`, `pt`, `api_key`, `iv`, `updated_time`, `verified`) VALUES
-(15, 'g', 'asdfgh', '956547896216', 'shail.sdofij@st.niituniversity.in', '', '', '', NULL, NULL, '', 0, 'customer', '2020-06-23 16:05:26', 'b\'\\x8a\\x8d\\xda\\x8b6\\xc6Q-8\\xc8t< \\xec\\xd1:\'', 'b\'Lj?\\xf5\\xda\\xc0\\xe4\\xf7\\xb9\\x84\\xea\\xe0H\\x05\\x85]\'', 'b\',\\xe9\\xc5 \\x0bg\\xbat\\x8d\\x00\\xd7\\t\\xaa\\xcfLl\'', '2020-06-23 16:05:26', 0);
+(50, 'g', 'asdfgh', '956547896216', 'shail.sdofij@st.niituniversity.in', '', '', '', NULL, NULL, '', 0, 'customer', '2020-06-24 16:35:57', 'tW6fxiBS8TD8fIwHwMZeZQ==', 'y9wWW5WbvOBgomJmoKDrrA==', '28UosCXPR66OWVtr6aCeeQ==', '2020-06-24 16:35:57', 0);
 
 -- --------------------------------------------------------
 
@@ -749,7 +749,7 @@ ALTER TABLE `order_details`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `Uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `Uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `vendor`
