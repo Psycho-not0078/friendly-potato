@@ -3,7 +3,7 @@ from .models import *
 import os
 from Crypto.Cipher import AES
 from datetime import datetime;
-from datetime import timedelta;
+from datetime import timedelta,timezone;
 import traceback
 import base64
 
@@ -23,33 +23,38 @@ def verify(data):
         print("running")
         #print(data.META.get('HTTP_USERNAME'))
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
-        ptext=u.values('pt')
+        ptext=base64.b64decode(u.values('pt')[0]['pt'])
         key=base64.b64decode(u.values('api_key')[0]['api_key'])
         iv=base64.b64decode(u.values('iv')[0]['iv'])
         mode = AES.MODE_CBC
         cipher = AES.new(key, mode ,iv)
+        hash=cipher.decrypt(base64.b64decode((data.META.get('HTTP_CIPHER'))))
         print(type(key))
-        print(key)
+        #print(key)
 
         #print(data.META)
-        print(cipher.decrypt(base64.b64decode((data.META.get('HTTP_CIPHER')))))
+        print(base64.b64encode(hash).decode('utf-8'))
+        print(base64.b64encode(ptext).decode('utf-8'))
         #print(data.META)
-        time_old=u.values('updated_time')
+        time_old=u.values('updated_time')[0]['updated_time']
         time_10mins=timedelta(minutes=10)
-        if(cipher.decrypt(base64.b64decode((data.META.get('HTTP_CIPHER'))))==ptext[0]['pt']):
-            print("asdg")
-            if ((datetime.now()-time_old)<time_10mins):#condition to check time pased
+        print("asdfghjk")
+        if(base64.b64encode(hash).decode('utf-8')==base64.b64encode(ptext).decode('utf-8')):
+            #print("asdg")
+            if ((datetime.now(timezone.utc)-time_old)<time_10mins):#condition to check time pased
                 print("still running")
-                status['resp']=="success"
+                status['resp']="success"
             else:
                 status=renew(data)
                 print("nah")
-                status['resp']=="success"
+                status['resp']="success"
+        else:
+            status['resp']=r"nah not going to happen --\(>_<)/--"
     except:
         print("fail")
         status['stat']='fail'
         status['resp']="fail"
-        traceback.print_exc()
+        status['error']=traceback.format_exc()
     return status
 
 def renew(data):
