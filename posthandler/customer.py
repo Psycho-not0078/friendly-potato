@@ -89,7 +89,7 @@ def view_vendor(data):
     status={}
     try:
         vendor_id=data.POST['Vid']
-        if data.headers.get('action')=="Description":
+        if data.POST['action']=="Description":
             d=Vendor.objects.filter(Vendor__vid=vendor_id)
             des=d.values('description')
             status['returns']=des

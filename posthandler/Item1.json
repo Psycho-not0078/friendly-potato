@@ -1,0 +1,8 @@
+{
+    "Item_1":{
+        "name":"Name_of_Item",
+        "qty":20,
+        "company":"company_name",
+        "cost":20.0
+    }
+}

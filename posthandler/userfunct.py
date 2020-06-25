@@ -7,6 +7,25 @@ from datetime import timedelta,timezone;
 import traceback
 import base64
 
+def APIgen(uid):
+    key = os.urandom(16)
+    iv = os.urandom(AES.block_size)  
+    print(AES.block_size)
+    print(iv)
+    strings= os.urandom(AES.block_size)    
+    mode = AES.MODE_CBC
+    cipher = AES.new(key,mode,iv)
+    encstr=cipher.encrypt(strings)
+    ret=base64.b64encode(encstr)
+
+    c=Users.objects.filter(uid__exact=uid)
+    c.update(api_key=base64.b64encode(key).decode('UTF-8'))
+    c.update(iv=base64.b64encode(iv).decode('UTF-8'))
+    c.update(pt=base64.b64encode(strings).decode('UTF-8'))
+
+    #c.save()
+
+    return ret
 
 def APIfunct(data,string1):
     status={}
@@ -29,27 +48,36 @@ def verify(data):
         mode = AES.MODE_CBC
         cipher = AES.new(key, mode ,iv)
         hash=cipher.decrypt(base64.b64decode((data.META.get('HTTP_CIPHER'))))
-        print(type(key))
+        #print(type(key))
         #print(key)
 
         #print(data.META)
-        print(base64.b64encode(hash).decode('utf-8'))
-        print(base64.b64encode(ptext).decode('utf-8'))
+        #print(base64.b64encode(hash).decode('utf-8'))
+        #print(base64.b64encode(ptext).decode('utf-8'))
+        #print(base64.b64encode(hash).decode('utf-8'))
         #print(data.META)
         time_old=u.values('updated_time')[0]['updated_time']
         time_10mins=timedelta(minutes=10)
-        print("asdfghjk")
+        #print("asdfghjk")
         if(base64.b64encode(hash).decode('utf-8')==base64.b64encode(ptext).decode('utf-8')):
             #print("asdg")
             if ((datetime.now(timezone.utc)-time_old)<time_10mins):#condition to check time pased
-                print("still running")
+                #print("still running")
                 status['resp']="success"
+                status['status']='verified'
             else:
-                status=renew(data)
-                print("nah")
-                status['resp']="success"
+                status['hash']=renew(data)
+                #print("nah")
+                if(status['hash']['stat']):
+                    status['resp']="fail"
+                    print(status)
+                else:
+                    status['resp']="success"
+                    status['stat']="renewed"
+                    print(status)
         else:
-            status['resp']=r"nah not going to happen --\(>_<)/--"
+            status['resp']="fail"
+            status['stat']=r"nah not going to happen --\(>_<)/--"
     except:
         print("fail")
         status['stat']='fail'
@@ -58,13 +86,14 @@ def verify(data):
     return status
 
 def renew(data):
-    status= {}
+    status=""
     try:
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
-        hash=APIgen(u.values('uid'))
-        status['hash']=hash
+        hash=APIgen(list(u.values('uid'))[0]['uid'])
+        status=hash
+        print(status)
     except:
-        status['stat']='fail'
+        status='fail'
     return status
 
 def sign_in(data):
@@ -122,60 +151,46 @@ def sign_up(data):
 
     return status
 
-def APIgen(uid):
-    key = os.urandom(16)
-    iv = os.urandom(AES.block_size)  
-    print(AES.block_size)
-    print(iv)
-    strings= os.urandom(AES.block_size)    
-    mode = AES.MODE_CBC
-    cipher = AES.new(key,mode,iv)
-    encstr=cipher.encrypt(strings)
-    ret=base64.b64encode(encstr)
-
-    c=Users.objects.filter(uid__exact=uid)
-    c.update(api_key=base64.b64encode(key).decode('UTF-8'))
-    c.update(iv=base64.b64encode(iv).decode('UTF-8'))
-    c.update(pt=base64.b64encode(strings).decode('UTF-8'))
-
-    #c.save()
-
-    return ret
-
 def edit_profile(data):
     status= {}
     try:
-        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
-        uid=u.values('uid')
-        user=Users.objects.filter(uid__exact=uid)
-        if(data.POST['Username']):
-            Username=data.POST['Username']
-            user.Username=Username
-        if(data.POST['Phno']):
-            Phno=data.POST['Phno']
-            user.Phno=Phno
-        if(data.POST['Email_Id']):
-            Email_Id=data.POST['Email_Id']
-            user.Email_Id=Email_Id
-        if(data.POST['Fname']):
-            Fname=data.POST['Fname']
-            user.Fname=Fname
-        if(data.POST['Mname']):
-            Mname=data.POST['Mname']
-            user.Mname=Mname
-        if(data.POST['Lname']):
-            Lname=data.POST['Lname']
-            user.Lname=Lname
-        if(data.POST['Address']):
-            Address=data.POST['Address']
-            user.Address=Address
+        print("fuyu")
+        user=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        #uid=u.values('uid')
+        #user=Users.objects.filter(uid__exact=uid)
+        #print(data.POST)
+        dt=dict(data.POST)
+        print(dt)
+        print(dt['Phno'])
+        print(dt['Phno'][0])
+        if(dt['Phno']):
+            Phno=dt['Phno'][0]
+            print(Phno)
+            user.update(phno=Phno)
+        if(dt['Email_Id'][0]):
+            Email_Id=dt['Email_Id'][0]
+            user.update(email_id=Email_Id)
+        if(dt['Fname']):
+            Fname=dt['Fname'][0]
+            user.update(fname=Fname)
+        if(dt['Mname']):
+            Mname=dt['Mname'][0]
+            user.update(mname=Mname)
+        if(dt['Lname']):
+            Lname=dt['Lname'][0]
+            user.update(lname=Lname)
+        if(dt['Address']):
+            Address=dt['Address'][0]
+            user.update(address=Address)
 
-        user.save()
+        #user.save()
 
         status['stat']="success"
     except :
         status['stat']="fail"
-    
+        status['error']=traceback.format_exc()
+        traceback.print_exc()
+    print(status)
     return status
 
 #         _            _            _      

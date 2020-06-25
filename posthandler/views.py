@@ -35,13 +35,16 @@ def index(request):
                     response=vorderview(request)
                 if headder=='Order_Place':
                     response=order(request)    
-                if headder=='':
-                    response=(request)
-                elif headder=="...":
+                if headder=='Edit_Profile':
+                    response=edit_profile(request)
+                    print(response)
+                elif headder=="":
                     response=asdfg()
                 
-            
-        res=JsonResponse(response)
+            response.update(stat)
+        print(response)
+        del response['resp']
+        res=JsonResponse(response , safe=False)
         print(res.content)
         #res['cipher']=response['hash']#the string used for api authication
 

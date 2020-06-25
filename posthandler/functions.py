@@ -25,12 +25,13 @@ def stock(data):
         dit=dict(data.items())
         for i in range(tnitem):
             current_item="Item_"+str(i)
-            qty=dit[current_item][2]
-            iname=dit[current_item][0]
-            icompany=dit[current_item][1]
+            qty=dit[current_item]['qty']
+            iname=dit[current_item]['name']
+            icompany=dit[current_item]['company']
             a=Items.objects.filter(item_name__exact=iname).filter(company__exact=icompany)
             if(a.count()!=1):
-                d=Items(name=iname,company=icompany,description=dit[current_item][3])
+                desctiption=dit[current_item]['description']
+                d=Items(name=iname,company=icompany,description=desctiption)
                 d.save()
             s=Stock(vid=Vid,iid=a.values('iid'),units=qty)
             s.save()
