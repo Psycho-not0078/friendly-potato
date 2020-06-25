@@ -7,7 +7,7 @@ from .functions import *
 from .userfunct import *
 from .customer import *
 from django.utils import *
-import json
+import json#for sending the response in json for cross patform usage
 
 def index(request):
     if request.method=="POST":
@@ -16,7 +16,7 @@ def index(request):
         headder=request.META.get('HTTP_ACTION')
         #print(headder)
         #print(type(headder))
-        if(headder=="Sign_In" or headder=="Sign_Up"):
+        if(headder=="Sign_In" or headder=="Sign_Up"):#working
             print(asdfg)
             response=APIfunct(request,headder)
         else:
@@ -35,22 +35,21 @@ def index(request):
                     response=vorderview(request)
                 if headder=='Order_Place':
                     response=order(request)    
-                if headder=='Edit_Profile':
+                if headder=='Edit_Profile':#working
                     response=edit_profile(request)
                     print(response)
                 elif headder=="":
                     response=asdfg()
-                
+                elif headder=="Sign_Out":
+                    response=sign_out(request)
             response.update(stat)
         print(response)
         del response['resp']
         res=JsonResponse(response , safe=False)
         print(res.content)
-        #res['cipher']=response['hash']#the string used for api authication
 
-        #print(type(a[0]['tt']))
         return res
-        #return HttpResponse("yooo!!")
+        #return HttpResponse("yooo!!")#first response of nothing (>_<)
 #         _            _            _      
 #        /\ \         /\ \         /\ \    
 #       /  \ \       /  \ \       /  \ \   

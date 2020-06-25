@@ -7,7 +7,7 @@ from datetime import timedelta,timezone;
 import traceback
 import base64
 
-def APIgen(uid):
+def APIgen(uid):#working
     key = os.urandom(16)
     iv = os.urandom(AES.block_size)  
     print(AES.block_size)
@@ -27,7 +27,7 @@ def APIgen(uid):
 
     return ret
 
-def APIfunct(data,string1):
+def APIfunct(data,string1):#working
     status={}
     headder=string1
     if(headder=="Sign_In"):
@@ -36,7 +36,7 @@ def APIfunct(data,string1):
         status=sign_up(data)
     return status
 
-def verify(data):
+def verify(data):#working
     status= {}
     try:
         print("running")
@@ -82,10 +82,10 @@ def verify(data):
         print("fail")
         status['stat']='fail'
         status['resp']="fail"
-        status['error']=traceback.format_exc()
+        #status['error']=traceback.format_exc()
     return status
 
-def renew(data):
+def renew(data):#working
     status=""
     try:
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
@@ -96,7 +96,7 @@ def renew(data):
         status='fail'
     return status
 
-def sign_in(data):
+def sign_in(data):#working
     status= {}
     try:
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
@@ -115,11 +115,11 @@ def sign_in(data):
             #stat['resp']="skip"
     except:
         status['stat']="error"
-        status['error']=traceback.format_exc()
+        #status['error']=traceback.format_exc()
 
     return status
 
-def sign_up(data):
+def sign_up(data):#working
     status= {}
     try:
         #print("fuyu")
@@ -147,11 +147,11 @@ def sign_up(data):
         #status['resp']="skip"
     except:
         status['stat']="error"
-        status['error']=traceback.format_exc()
+        #status['error']=traceback.format_exc()
 
     return status
 
-def edit_profile(data):
+def edit_profile(data):#working
     status= {}
     try:
         print("fuyu")
@@ -188,9 +188,26 @@ def edit_profile(data):
         status['stat']="success"
     except :
         status['stat']="fail"
-        status['error']=traceback.format_exc()
-        traceback.print_exc()
+        #status['error']=traceback.format_exc()
+        #traceback.print_exc()
     print(status)
+    return status
+
+def sign_out(data):#working
+    status= {}
+    try:
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        uco=u.filter(online=True).count()
+        if(uco==1):
+            u.update(online=False)
+            #stat['resp']="skip"
+        else:
+            status['stat']="Nice Try"
+            #stat['resp']="skip"
+    except:
+        status['stat']="error"
+        #status['error']=traceback.format_exc()
+
     return status
 
 #         _            _            _      
