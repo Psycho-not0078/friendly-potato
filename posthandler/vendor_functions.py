@@ -4,7 +4,8 @@ import os
 from Crypto.Cipher import AES
 from datetime import datetime;
 from datetime import timedelta;
-
+import json
+import traceback
 
 def asdfg():
     status=[]
@@ -20,24 +21,28 @@ def stock(data):
     status={}
     try:
         v=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
-        Vid=v.values('vid')
+        Vid=v.values('Vendor_vid')
         tnitem=data.POST['Number']
+        print(data.POST['Number'])
         dit=dict(data.items())
+        print(dit)
         for i in range(tnitem):
             current_item="Item_"+str(i)
-            qty=dit[current_item]['qty']
-            iname=dit[current_item]['name']
-            icompany=dit[current_item]['company']
+            itm=json.load(dit[current_item])
+            qty=itm['qty']
+            iname=itm['name']
+            icompany=itm['company']
             a=Items.objects.filter(item_name__exact=iname).filter(company__exact=icompany)
             if(a.count()!=1):
-                desctiption=dit[current_item]['description']
+                desctiption=itm['description']
                 d=Items(name=iname,company=icompany,description=desctiption)
                 d.save()
-            s=Stock(vid=Vid,iid=a.values('iid'),units=qty)
+            s=Stock(Vendor_vid=Vid,iid=a.values('iid'),units=qty)
             s.save()
         status['stat']='success'
     except :
         status['stat']='error'
+        traceback.print_exc()
     return status
 
 def vorderview(data):

@@ -3,6 +3,7 @@
         "name":"Name_of_Item",
         "qty":20,
         "company":"company_name",
+        "description":"asdfergrew",
         "cost":20.0
     }
 }

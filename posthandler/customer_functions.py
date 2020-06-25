@@ -164,6 +164,9 @@ def corderview(data):
         status['stat']="Some error ocurred"
     return status
 
+def Mon_order(data):
+    status={}
+    return status
 #         _            _            _      
 #        /\ \         /\ \         /\ \    
 #       /  \ \       /  \ \       /  \ \   

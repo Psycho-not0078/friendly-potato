@@ -9,8 +9,8 @@ from django.db import models
 
 
 class Chat(models.Model):
-    cid = models.OneToOneField('Customers', models.DO_NOTHING, db_column='Cid', primary_key=True)  # Field name made lowercase.
-    vid = models.ForeignKey('Vendor', models.DO_NOTHING, db_column='Vid')  # Field name made lowercase.
+    cid = models.OneToOneField('Customers', models.CASCADE, db_column='Cid', primary_key=True)  # Field name made lowercase.
+    vid = models.ForeignKey('Vendor', models.CASCADE, db_column='Vid')  # Field name made lowercase.
     msg = models.TextField()
     time = models.DateTimeField()
 
@@ -21,7 +21,7 @@ class Chat(models.Model):
 
 
 class DeliveryPersonal(models.Model):
-    did = models.OneToOneField('Users', models.DO_NOTHING, db_column='Did', primary_key=True)  # Field name made lowercase.
+    did = models.OneToOneField('Users', models.CASCADE, db_column='Did', primary_key=True)  # Field name made lowercase.
     acc_dets = models.TextField(db_column='ACC_dets')  # Field name made lowercase.
     licence_no = models.CharField(db_column='Licence_no', unique=True, max_length=30)  # Field name made lowercase.
     licence_plt_no = models.CharField(db_column='Licence_plt_no', unique=True, max_length=10)  # Field name made lowercase.
@@ -33,8 +33,8 @@ class DeliveryPersonal(models.Model):
 
 class MonthlyOrder(models.Model):
     mid = models.AutoField(db_column='Mid', primary_key=True)  # Field name made lowercase.
-    cid = models.ForeignKey('Customers', models.DO_NOTHING, db_column='Cid')  # Field name made lowercase.
-    vid = models.ForeignKey('Vendor', models.DO_NOTHING, db_column='Vid')  # Field name made lowercase.
+    cid = models.ForeignKey('Customers', models.CASCADE, db_column='Cid')  # Field name made lowercase.
+    vid = models.ForeignKey('Vendor', models.CASCADE, db_column='Vid')  # Field name made lowercase.
     createddate = models.DateTimeField(db_column='CreatedDate')  # Field name made lowercase.
     costpermonth = models.FloatField(db_column='CostPerMonth')  # Field name made lowercase.
 
@@ -44,8 +44,8 @@ class MonthlyOrder(models.Model):
 
 
 class Morder(models.Model):
-    moid = models.OneToOneField(MonthlyOrder, models.DO_NOTHING, db_column='Moid', primary_key=True)  # Field name made lowercase.
-    iid = models.ForeignKey('Items', models.DO_NOTHING, db_column='iid')
+    moid = models.OneToOneField(MonthlyOrder, models.CASCADE, db_column='Moid', primary_key=True)  # Field name made lowercase.
+    iid = models.ForeignKey('Items', models.CASCADE, db_column='iid')
     qty = models.IntegerField()
 
     class Meta:
@@ -55,8 +55,8 @@ class Morder(models.Model):
 
 
 class Stock(models.Model):
-    vid = models.OneToOneField('Vendor', models.DO_NOTHING, db_column='Vid', primary_key=True)  # Field name made lowercase.
-    iid = models.ForeignKey('Items', models.DO_NOTHING, db_column='iid')
+    vid = models.OneToOneField('Vendor', models.CASCADE, db_column='Vid', primary_key=True)  # Field name made lowercase.
+    iid = models.ForeignKey('Items', models.CASCADE, db_column='iid')
     cost = models.FloatField()
     units = models.FloatField()
 
@@ -75,8 +75,8 @@ class AuthGroup(models.Model):
 
 
 class AuthGroupPermissions(models.Model):
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
+    group = models.ForeignKey(AuthGroup, models.CASCADE)
+    permission = models.ForeignKey('AuthPermission', models.CASCADE)
 
     class Meta:
         managed = False
@@ -86,7 +86,7 @@ class AuthGroupPermissions(models.Model):
 
 class AuthPermission(models.Model):
     name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
+    content_type = models.ForeignKey('DjangoContentType', models.CASCADE)
     codename = models.CharField(max_length=100)
 
     class Meta:
@@ -113,8 +113,8 @@ class AuthUser(models.Model):
 
 
 class AuthUserGroups(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, models.CASCADE)
+    group = models.ForeignKey(AuthGroup, models.CASCADE)
 
     class Meta:
         managed = False
@@ -123,8 +123,8 @@ class AuthUserGroups(models.Model):
 
 
 class AuthUserUserPermissions(models.Model):
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
+    user = models.ForeignKey(AuthUser, models.CASCADE)
+    permission = models.ForeignKey(AuthPermission, models.CASCADE)
 
     class Meta:
         managed = False
@@ -133,7 +133,7 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Customers(models.Model):
-    cid = models.OneToOneField('Users', models.DO_NOTHING, db_column='Cid', primary_key=True)  # Field name made lowercase.
+    cid = models.OneToOneField('Users', models.CASCADE, db_column='Cid', primary_key=True)  # Field name made lowercase.
     payment_dets = models.TextField(db_column='Payment_Dets', blank=True, null=True)  # Field name made lowercase.
     balance = models.FloatField()
 
@@ -148,8 +148,8 @@ class DjangoAdminLog(models.Model):
     object_repr = models.CharField(max_length=200)
     action_flag = models.PositiveSmallIntegerField()
     change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
+    content_type = models.ForeignKey('DjangoContentType', models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(AuthUser, models.CASCADE)
 
     class Meta:
         managed = False
@@ -198,8 +198,8 @@ class Items(models.Model):
 
 
 class Order(models.Model):
-    oid = models.OneToOneField('OrderDetails', models.DO_NOTHING, db_column='oid', primary_key=True)
-    iid = models.ForeignKey(Items, models.DO_NOTHING, db_column='iid')
+    oid = models.OneToOneField('OrderDetails', models.CASCADE, db_column='oid', primary_key=True)
+    iid = models.ForeignKey(Items, models.CASCADE, db_column='iid')
     qty = models.FloatField()
 
     class Meta:
@@ -224,8 +224,8 @@ class OrderDetails(models.Model):
 
 
 class ReviewsRating(models.Model):
-    cid = models.OneToOneField(Customers, models.DO_NOTHING, db_column='cid', primary_key=True)
-    vid = models.ForeignKey('Vendor', models.DO_NOTHING, db_column='vid')
+    cid = models.OneToOneField(Customers, models.CASCADE, db_column='cid', primary_key=True)
+    vid = models.ForeignKey('Vendor', models.CASCADE, db_column='vid')
     review = models.TextField()
     rating = models.FloatField()
 
@@ -236,7 +236,7 @@ class ReviewsRating(models.Model):
 
 
 class UserVerification(models.Model):
-    uid = models.OneToOneField('Users', models.DO_NOTHING, db_column='uid', primary_key=True)
+    uid = models.OneToOneField('Users', models.CASCADE, db_column='uid', primary_key=True)
     email = models.CharField(max_length=30)
     hash = models.CharField(unique=True, max_length=100)
     time = models.DateTimeField()
@@ -274,7 +274,7 @@ class Users(models.Model):
 
 
 class Vendor(models.Model):
-    vid = models.OneToOneField(Users, models.DO_NOTHING, db_column='Vid', primary_key=True)  # Field name made lowercase.
+    vid = models.OneToOneField(Users, models.CASCADE, db_column='Vid', primary_key=True)  # Field name made lowercase.
     description = models.TextField(blank=True, null=True)
     gst_code = models.CharField(db_column='GST_Code', max_length=15, blank=True, null=True)  # Field name made lowercase.
     acc_dets = models.TextField(db_column='ACC Dets', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.

@@ -10,8 +10,8 @@ import base64
 def APIgen(uid):#working
     key = os.urandom(16)
     iv = os.urandom(AES.block_size)  
-    print(AES.block_size)
-    print(iv)
+    #print(AES.block_size)
+    #print(iv)
     strings= os.urandom(AES.block_size)    
     mode = AES.MODE_CBC
     cipher = AES.new(key,mode,iv)
@@ -57,7 +57,6 @@ def verify(data):#working
         #print(base64.b64encode(hash).decode('utf-8'))
         #print(data.META)
         time_old=u.values('updated_time')[0]['updated_time']
-        time_10mins=timedelta(minutes=10)
         #print(type(time_old))
         #print(time_old)
         #print(datetime.now(timezone.utc))
@@ -70,7 +69,7 @@ def verify(data):#working
             time_old=u.values('updated_time')[0]['updated_time']
             time_10mins=timedelta(minutes=10)
             f=(datetime.now(timezone.utc)-time_old)
-            print(f/timedelta(minutes=1))
+            #print(f/timedelta(minutes=1))
             if (abs(f/timedelta(minutes=1))<(10*60)):#condition to check time pased
                 #print("still running")
                 status['resp']="success"
@@ -90,7 +89,7 @@ def verify(data):#working
             status['resp']="fail"
             status['stat']=r"nah not going to happen --\(>_<)/--"
     except:
-        print("fail")
+        #print("fail")
         status['stat']='fail'
         status['resp']="fail"
         #status['error']=traceback.format_exc()
@@ -145,14 +144,28 @@ def sign_up(data):#working
         user.mname=data.POST['Mname']
         user.lname=data.POST['Lname']
         user.type=data.POST['Type']
-        user.online=0
+        user.online=True
         user.date_of_join=datetime.now()
         user.verified=0
         user.iv=0
         user.pt=" "
         user.api_key=" "
         user.iv=" "
+        user.verified=False
         user.save()
+        if(data.POST['Type']=="customer"):
+            c=Customers()
+            c.cid=user.objects.last()
+            c.balance=0.0
+            c.payment_dets=""
+            c.save()
+        elif(data.POST['Type']=="vendor"):
+            v=Vendor()
+            print(user.objects.last())
+            v.vid=list(user.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password']).values('uid'))[0]['uid']
+            v.shop_name=data.POST['Shop_Name']
+            v.gst_code=data.POST['GST_Code']
+            v.save()
         Use=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         #print("fuyu")
         s=list(Use.values('uid'))
@@ -163,6 +176,7 @@ def sign_up(data):#working
         #status['resp']="skip"
     except:
         status['stat']="error"
+        traceback.print_exc()
         #status['error']=traceback.format_exc()
 
     return status
@@ -216,6 +230,7 @@ def sign_out(data):#working
         uco=u.filter(online=True).count()
         if(uco==1):
             u.update(online=False)
+            status['stat']="success"
             #stat['resp']="skip"
         else:
             status['stat']="Nice Try"
@@ -226,6 +241,15 @@ def sign_out(data):#working
 
     return status
 
+def uverify(data):
+    status={}
+    try:
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        u.update(verified=True)
+        status['stat']="success"
+    except:
+        status['stat']="error"
+    return status
 #         _            _            _      
 #        /\ \         /\ \         /\ \    
 #       /  \ \       /  \ \       /  \ \   

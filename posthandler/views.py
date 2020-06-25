@@ -33,6 +33,8 @@ def index(request):
                     response=corderview(request)
                 if headder=='Vendor_View_Order':
                     response=vorderview(request)
+                if headder=='Stock':
+                    response=stock(request)
                 if headder=='Order_Place':
                     response=order(request)    
                 if headder=='Edit_Profile':#working   
@@ -42,6 +44,8 @@ def index(request):
                     response=asdfg()
                 elif headder=="Sign_Out":
                     response=sign_out(request)
+                elif headder=="Verify":
+                    response=uverify(request)
             response.update(stat)
             del response['resp']
         #print(response)
