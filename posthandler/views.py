@@ -3,9 +3,9 @@ from django.http import JsonResponse
 from django.db import models
 from .models import * #the database connect
 import datetime 
-from .functions import *
-from .userfunct import *
-from .customer import *
+from .vendor_functions import *
+from .user_functions import *
+from .customer_functions import *
 from django.utils import *
 import json#for sending the response in json for cross patform usage
 
@@ -35,18 +35,18 @@ def index(request):
                     response=vorderview(request)
                 if headder=='Order_Place':
                     response=order(request)    
-                if headder=='Edit_Profile':#working
+                if headder=='Edit_Profile':#working   
                     response=edit_profile(request)
-                    print(response)
+                    #print(response)
                 elif headder=="":
                     response=asdfg()
                 elif headder=="Sign_Out":
                     response=sign_out(request)
             response.update(stat)
-        print(response)
-        del response['resp']
+            del response['resp']
+        #print(response)
         res=JsonResponse(response , safe=False)
-        print(res.content)
+        #print(res.content)
 
         return res
         #return HttpResponse("yooo!!")#first response of nothing (>_<)

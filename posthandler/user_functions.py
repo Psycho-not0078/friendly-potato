@@ -39,7 +39,7 @@ def APIfunct(data,string1):#working
 def verify(data):#working
     status= {}
     try:
-        print("running")
+        #print("running")
         #print(data.META.get('HTTP_USERNAME'))
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         ptext=base64.b64decode(u.values('pt')[0]['pt'])
@@ -58,23 +58,34 @@ def verify(data):#working
         #print(data.META)
         time_old=u.values('updated_time')[0]['updated_time']
         time_10mins=timedelta(minutes=10)
+        #print(type(time_old))
+        #print(time_old)
+        #print(datetime.now(timezone.utc))
+
         #print("asdfghjk")
         if(base64.b64encode(hash).decode('utf-8')==base64.b64encode(ptext).decode('utf-8')):
             #print("asdg")
-            if ((datetime.now(timezone.utc)-time_old)<time_10mins):#condition to check time pased
+            #print((datetime.now(timezone.utc)-time_old)<time_10mins)
+            #print((datetime.now(timezone.utc)-time_old))
+            time_old=u.values('updated_time')[0]['updated_time']
+            time_10mins=timedelta(minutes=10)
+            f=(datetime.now(timezone.utc)-time_old)
+            print(f/timedelta(minutes=1))
+            if (abs(f/timedelta(minutes=1))<(10*60)):#condition to check time pased
                 #print("still running")
                 status['resp']="success"
                 status['status']='verified'
             else:
                 status['hash']=renew(data)
                 #print("nah")
-                if(status['hash']['stat']):
+                if(status['hash']=='fail'):
+                    del status['hash']
                     status['resp']="fail"
-                    print(status)
+                    #print(status)
                 else:
                     status['resp']="success"
                     status['stat']="renewed"
-                    print(status)
+                    #print(status)
         else:
             status['resp']="fail"
             status['stat']=r"nah not going to happen --\(>_<)/--"
@@ -83,6 +94,7 @@ def verify(data):#working
         status['stat']='fail'
         status['resp']="fail"
         #status['error']=traceback.format_exc()
+        traceback.print_exc()
     return status
 
 def renew(data):#working
@@ -90,8 +102,8 @@ def renew(data):#working
     try:
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         hash=APIgen(list(u.values('uid'))[0]['uid'])
-        status=hash
-        print(status)
+        status=hash.decode("utf-8")
+        #print(status)
     except:
         status='fail'
     return status
@@ -164,9 +176,9 @@ def edit_profile(data):#working
         #user=Users.objects.filter(uid__exact=uid)
         #print(data.POST)
         dt=dict(data.POST)
-        print(dt)
-        print(dt['Phno'])
-        print(dt['Phno'][0])
+        #print(dt)
+        #print(dt['Phno'])
+        #print(dt['Phno'][0])
         if(dt['Phno']):
             Phno=dt['Phno'][0]
             print(Phno)
@@ -194,7 +206,7 @@ def edit_profile(data):#working
         status['stat']="fail"
         #status['error']=traceback.format_exc()
         #traceback.print_exc()
-    print(status)
+    #print(status)
     return status
 
 def sign_out(data):#working
