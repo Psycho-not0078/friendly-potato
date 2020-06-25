@@ -102,13 +102,14 @@ def sign_in(data):#working
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         uco=u.count()
         if(uco==1):
+            u.update(online=True)
             p=u.values('uid')[0]['uid']
             hash=APIgen(p)
             status['stat']="success"
             status['hash']=hash.decode("utf-8")
             
 
-            u.update(online=True)
+            
             #stat['resp']="skip"
         else:
             status['stat']="wrong_login"
@@ -128,6 +129,9 @@ def sign_up(data):#working
         user.passwd=data.POST['Password']
         user.phno=data.POST['Phone_no']
         user.email_id=data.POST['Email_Id']
+        user.fname=data.POST['Fname']
+        user.mname=data.POST['Mname']
+        user.lname=data.POST['Lname']
         user.type=data.POST['Type']
         user.online=0
         user.date_of_join=datetime.now()

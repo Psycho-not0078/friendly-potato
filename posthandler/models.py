@@ -31,6 +31,29 @@ class DeliveryPersonal(models.Model):
         db_table = 'Delivery_personal'
 
 
+class MonthlyOrder(models.Model):
+    mid = models.AutoField(db_column='Mid', primary_key=True)  # Field name made lowercase.
+    cid = models.ForeignKey('Customers', models.DO_NOTHING, db_column='Cid')  # Field name made lowercase.
+    vid = models.ForeignKey('Vendor', models.DO_NOTHING, db_column='Vid')  # Field name made lowercase.
+    createddate = models.DateTimeField(db_column='CreatedDate')  # Field name made lowercase.
+    costpermonth = models.FloatField(db_column='CostPerMonth')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Monthly_Order'
+
+
+class Morder(models.Model):
+    moid = models.OneToOneField(MonthlyOrder, models.DO_NOTHING, db_column='Moid', primary_key=True)  # Field name made lowercase.
+    iid = models.ForeignKey('Items', models.DO_NOTHING, db_column='iid')
+    qty = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'Morder'
+        unique_together = (('moid', 'iid'),)
+
+
 class Stock(models.Model):
     vid = models.OneToOneField('Vendor', models.DO_NOTHING, db_column='Vid', primary_key=True)  # Field name made lowercase.
     iid = models.ForeignKey('Items', models.DO_NOTHING, db_column='iid')
@@ -240,7 +263,7 @@ class Users(models.Model):
     type = models.CharField(db_column='Type', max_length=10)  # Field name made lowercase.
     date_of_join = models.DateTimeField(db_column='date of join')  # Field renamed to remove unsuitable characters.
     pt = models.TextField()
-    api_key = models.TextField(blank=True, null=True)
+    api_key = models.TextField()
     iv = models.TextField()
     updated_time = models.DateTimeField()
     verified = models.IntegerField()
