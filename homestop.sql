@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 24, 2020 at 06:56 PM
+-- Generation Time: Jun 26, 2020 at 12:29 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.6
 
@@ -181,7 +181,15 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (117, 'Can add order', 30, 'add_order'),
 (118, 'Can change order', 30, 'change_order'),
 (119, 'Can delete order', 30, 'delete_order'),
-(120, 'Can view order', 30, 'view_order');
+(120, 'Can view order', 30, 'view_order'),
+(121, 'Can add monthly order', 31, 'add_monthlyorder'),
+(122, 'Can change monthly order', 31, 'change_monthlyorder'),
+(123, 'Can delete monthly order', 31, 'delete_monthlyorder'),
+(124, 'Can view monthly order', 31, 'view_monthlyorder'),
+(125, 'Can add morder', 32, 'add_morder'),
+(126, 'Can change morder', 32, 'change_morder'),
+(127, 'Can delete morder', 32, 'delete_morder'),
+(128, 'Can view morder', 32, 'view_morder');
 
 -- --------------------------------------------------------
 
@@ -318,6 +326,8 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (15, 'posthandler', 'djangomigrations'),
 (16, 'posthandler', 'djangosession'),
 (19, 'posthandler', 'items'),
+(31, 'posthandler', 'monthlyorder'),
+(32, 'posthandler', 'morder'),
 (20, 'posthandler', 'ord'),
 (30, 'posthandler', 'order'),
 (21, 'posthandler', 'orderdetails'),
@@ -367,7 +377,8 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (17, 'posthandler', '0001_initial', '2020-06-12 13:39:59.005893'),
 (18, 'sessions', '0001_initial', '2020-06-12 13:39:59.153285'),
 (19, 'posthandler', '0002_auto_20200613_0150', '2020-06-13 01:50:56.459262'),
-(20, 'posthandler', '0003_auto_20200623_0849', '2020-06-23 08:50:05.738871');
+(20, 'posthandler', '0003_auto_20200623_0849', '2020-06-23 08:50:05.738871'),
+(21, 'posthandler', '0004_monthlyorder_morder', '2020-06-26 06:28:12.162255');
 
 -- --------------------------------------------------------
 
@@ -392,6 +403,32 @@ CREATE TABLE `items` (
   `Item_Name` varchar(30) NOT NULL,
   `Company` int(11) NOT NULL,
   `Cost` bigint(20) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Monthly_Order`
+--
+
+CREATE TABLE `Monthly_Order` (
+  `Mid` int(11) NOT NULL,
+  `Cid` int(11) NOT NULL,
+  `Vid` int(11) NOT NULL,
+  `CreatedDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `CostPerMonth` double NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Morder`
+--
+
+CREATE TABLE `Morder` (
+  `Moid` int(11) NOT NULL,
+  `iid` int(11) NOT NULL,
+  `qty` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -482,7 +519,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`Uid`, `Usrname`, `Passwd`, `Phno`, `Email_Id`, `Fname`, `Mname`, `Lname`, `Lat`, `Lon`, `Address`, `Online`, `Type`, `date of join`, `pt`, `api_key`, `iv`, `updated_time`, `verified`) VALUES
-(50, 'g', 'asdfgh', '956547896216', 'shail.sdofij@st.niituniversity.in', '', '', '', NULL, NULL, '', 0, 'customer', '2020-06-24 16:35:57', 'tW6fxiBS8TD8fIwHwMZeZQ==', 'y9wWW5WbvOBgomJmoKDrrA==', '28UosCXPR66OWVtr6aCeeQ==', '2020-06-24 16:35:57', 0);
+(52, 'g', 'asdfgh', '6854163', 'shail.sdofij@st.niituniversity.in', 'asddfg', 'ssdfg', 'qwerty', NULL, NULL, '46,asd,awefwsd', 1, 'customer', '2020-06-25 13:33:18', 'Amb0+VTENDuv6akBwm8I0w==', 'WgFY7K/vmOm93fl7wIS2mg==', 'XFyOmDu+Uz8oUjVUzUl5eA==', '2020-06-25 13:33:18', 1),
+(64, 'gh', 'asdfghasd', '123456234', 'shail.sdaasdofij@st.niituniveqwrsity.in', 'asd', 'zxc', 'qwer', NULL, NULL, '', 1, 'vendor', '2020-06-25 17:13:43', ' ', ' ', ' ', '2020-06-25 17:13:43', 0);
 
 -- --------------------------------------------------------
 
@@ -618,6 +656,21 @@ ALTER TABLE `items`
   ADD PRIMARY KEY (`iid`);
 
 --
+-- Indexes for table `Monthly_Order`
+--
+ALTER TABLE `Monthly_Order`
+  ADD PRIMARY KEY (`Mid`),
+  ADD KEY `q` (`Cid`),
+  ADD KEY `w` (`Vid`);
+
+--
+-- Indexes for table `Morder`
+--
+ALTER TABLE `Morder`
+  ADD PRIMARY KEY (`Moid`,`iid`),
+  ADD KEY `i` (`iid`);
+
+--
 -- Indexes for table `order`
 --
 ALTER TABLE `order`
@@ -689,7 +742,7 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT for table `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
 
 --
 -- AUTO_INCREMENT for table `auth_user`
@@ -731,13 +784,19 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT for table `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `Monthly_Order`
+--
+ALTER TABLE `Monthly_Order`
+  MODIFY `Mid` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `order_details`
@@ -749,7 +808,7 @@ ALTER TABLE `order_details`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `Uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `Uid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `vendor`
@@ -813,6 +872,20 @@ ALTER TABLE `Delivery_personal`
 ALTER TABLE `django_admin_log`
   ADD CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+
+--
+-- Constraints for table `Monthly_Order`
+--
+ALTER TABLE `Monthly_Order`
+  ADD CONSTRAINT `q` FOREIGN KEY (`Cid`) REFERENCES `customers` (`Cid`),
+  ADD CONSTRAINT `w` FOREIGN KEY (`Vid`) REFERENCES `vendor` (`Vid`);
+
+--
+-- Constraints for table `Morder`
+--
+ALTER TABLE `Morder`
+  ADD CONSTRAINT `e` FOREIGN KEY (`Moid`) REFERENCES `Monthly_Order` (`Mid`),
+  ADD CONSTRAINT `i` FOREIGN KEY (`iid`) REFERENCES `items` (`iid`);
 
 --
 -- Constraints for table `order`
