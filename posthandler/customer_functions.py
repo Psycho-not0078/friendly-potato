@@ -25,6 +25,21 @@ def review(data):
     return status
 
 
+def set_payment(data):
+    status={}
+    try:
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        cid=u.values('uid')
+        payment_Dets=data.POST["payment_dets"]
+        n_customer=Customers(cid=cid,payment_dets=payment_Dets)
+        n_customer.save()
+        status['stat']='success'
+    except:
+        status['stat']='fail'
+    return status
+        
+
+
 def order(data):
     status= {}
     try:
@@ -33,38 +48,34 @@ def order(data):
         c_id=u.values('uid')
         a=Users.objects.filter(Vendor__shop_name__exact=search_element)
         vid=a.values('uid')
-        order=data.POST['order']
-        items=data.POST['item_name']
-        quantity=data.POST['qty']
-        item_iid=[]
-        item_cost=[]
-        t_cost=0;
-        for i in range(len(quantity)):
-            t_cost=t_cost+(item_cost[i]*quantity[i])
+        tnitem=data.POST['Number']
+        dit=dict(data.order())
 
-        t2=OrderDetails(cid=c_id,vid=vid,total_cost=t_cost)
-        t2.save()
         temp=OrderDetails.object.latest('time')
-        o_id=temp.values('oid')
-        for i in items:
-            temp=items.object.filter(Item_Name__exact=i)
-            i_id=temp.values('iid')
-            i_cost=temp.values('cost')
-            item_iid.append(i_id)
-            item_cost.append(i_cost)
-        
+        o_id=temp.values('oid')+1 # this to get the order id because order is autoincrement in order table but we need same order id for one order
 
-        for i in range(len(item_iid)):
-            t1=Order(oid=o_id,iid=item_iid[i],qty=quantity[i])
-            t1.save()
+        for i in range(tnitem+1):
+            current_item="item_"+str(i+1)
+            itm=json.load(dit[current_item])
+            qty=itm['qty']
+            iname=itm['name']
+            icompany=itm['company']
+            a=Items.objects.filter(item_name__exact=iname).filter(company__exact=icompany)
+            cost=a.values('cost')
+            iid=a.values('iid')
+            t_cost=t_cost+(cost*qty) # to update total cost in orderdetail table
 
-        t2=OrderDetails(oid=o_id,cid=c_id,vid=vid,total_cost=t_cost)
-        t2.save()
+            order=Order(oid=o_id,iid=iid,qty=qty)
+            order.save()
 
-        for i in range(len(item_iid)):
-            s=Stock.object.filter(vid__exact=vid).filter(iid_exact=item_iid[i])
-            s.units=s.values('units')-quantity[i]
+            s=Stock.object.filter(vid__exact=vid).filter(iid_exact=iid)
+            s.units=s.values('units')-qty
             s.save()
+
+        order_d=OrderDetails(oid=o_id,cid=c_id,vid=vid,time=datetime.now(),total_cost=t_cost)
+        order_d.save()
+        status['stat']='success'
+
 
     except:
         status['stat']="error"

@@ -72,6 +72,8 @@ def verify(data):#working
             #print(f/timedelta(minutes=1))
             if (abs(f/timedelta(minutes=1))<(10*60)):#condition to check time pased
                 #print("still running")
+                user=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+                user.update(updated_time=datetime.now())
                 status['resp']="success"
                 status['status']='verified'
             else:
@@ -153,7 +155,7 @@ def sign_up(data):#working
         user.iv=" "
         user.verified=False
         user.save()
-        if(data.POST['Type']=="customer"):
+        '''if(data.POST['Type']=="customer"):
             c=Customers()
             c.cid=user.objects.last()
             c.balance=0.0
@@ -166,6 +168,7 @@ def sign_up(data):#working
             v.shop_name=data.POST['Shop_Name']
             v.gst_code=data.POST['GST_Code']
             v.save()
+        '''
         Use=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         #print("fuyu")
         s=list(Use.values('uid'))

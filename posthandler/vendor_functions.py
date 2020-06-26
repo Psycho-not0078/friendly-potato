@@ -26,8 +26,8 @@ def stock(data):
         print(data.POST['Number'])
         dit=dict(data.items())
         print(dit)
-        for i in range(tnitem):
-            current_item="Item_"+str(i)
+        for i in range(tnitem+1):
+            current_item="Item_"+str(i+1)
             itm=json.load(dit[current_item])
             qty=itm['qty']
             iname=itm['name']
@@ -97,6 +97,20 @@ def locate(data):
         status['error']=traceback.format_exc()
     return status
 
+def set_details(data):
+    status={}
+    try:
+        v=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        vid=u.values('uid')
+        description=data.POST["description"]
+        gst_code=data.POST["GST_code"]
+        acc_details=data.POST["acc_details"]
+        shop_name=data.POST["shop_name"]
+        n_vendor=Vendor(vid=cid,desctiption=desctiption,gst_code=gst_code,acc_details=acc_details,shop_name=shop_name)
+        n_vendor.save()
+        status['stat']='success'
+    except:
+        status['stat']='fail'
 
 
 #         _            _            _      
