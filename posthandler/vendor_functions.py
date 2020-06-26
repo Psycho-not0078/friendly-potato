@@ -94,7 +94,7 @@ def locate(data):
             status[i]=x[i]
     except:
         status['stat']="error"
-        status['error']=traceback.format_exc()
+        traceback.print_exc()
     return status
 
 def set_details(data):
@@ -111,7 +111,7 @@ def set_details(data):
         status['stat']='success'
     except:
         status['stat']='fail'
-
+        traceback.print_exc()
 
 #         _            _            _      
 #        /\ \         /\ \         /\ \    

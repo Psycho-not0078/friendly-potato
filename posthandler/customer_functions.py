@@ -177,6 +177,13 @@ def corderview(data):
 
 def Mon_order(data):
     status={}
+    try:
+        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        typeo=data.POST['type']
+        tnit=data.POST['Items_Count']
+
+    except :
+        status['stat']="error"
     return status
 #         _            _            _      
 #        /\ \         /\ \         /\ \    
