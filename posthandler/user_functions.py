@@ -138,6 +138,7 @@ def sign_up(data):#working
     try:
         #print("fuyu")
         user=Users()
+        #print(list(Users.objects.all().values()))
         user.usrname=data.POST['Username']
         user.passwd=data.POST['Password']
         user.phno=data.POST['Phone_no']

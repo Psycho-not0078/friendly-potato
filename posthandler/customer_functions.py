@@ -5,6 +5,7 @@ from Crypto.Cipher import AES
 from datetime import datetime;
 from datetime import timedelta;
 import traceback
+import json
 
 
 def review(data):
@@ -179,12 +180,36 @@ def Mon_order(data):
     status={}
     try:
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
-        typeo=data.POST['type']
         tnit=data.POST['Items_Count']
+        uid=list(u.values('uid'))[0]['uid']
+        shp_name=data.POST['Shop_Name']
+        q=MonthlyOrder()
+        q.cid=uid
+        q.vid=list(Vendor.objects.filter(shop_name__exact=shp_name).values())[0]['shop_name']
+        q.total_cost=0
+        q.save()
+        for i in range(tnit):
+            x=Morder()
+            current_item="Item_"+str(i+1)
+            qwerty=data.POST[current_item]
+            QWERTY=json.load(qwerty)
+            o=order()
+            o.iid=list(Items.objects.filter(item_name__exact=QWERTY['item_name']).filter(company__exact=QWERTY['item_company']).values('iid'))[0]['iid']
+            o.qty=QWERTY['qty']
+            o.save()
 
     except :
         status['stat']="error"
+        traceback.print_exc()
     return status
+
+def view_Mon_order(data):
+    status={}
+    try:
+
+    except :
+        status['stat']="error"
+        traceback.print_exc() 
 #         _            _            _      
 #        /\ \         /\ \         /\ \    
 #       /  \ \       /  \ \       /  \ \   
