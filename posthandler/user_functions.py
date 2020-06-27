@@ -42,6 +42,7 @@ def verify(data):#working
         #print("running")
         #print(data.META.get('HTTP_USERNAME'))
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        print(u.values())
         ptext=base64.b64decode(u.values('pt')[0]['pt'])
         key=base64.b64decode(u.values('api_key')[0]['api_key'])
         iv=base64.b64decode(u.values('iv')[0]['iv'])
@@ -156,20 +157,19 @@ def sign_up(data):#working
         user.iv=" "
         user.verified=False
         user.save()
-        '''if(data.POST['Type']=="customer"):
+        if(data.POST['Type']=="customer"):
             c=Customers()
-            c.cid=user.objects.last()
+            c.cid=user
             c.balance=0.0
             c.payment_dets=""
             c.save()
         elif(data.POST['Type']=="vendor"):
             v=Vendor()
-            print(user.objects.last())
-            v.vid=list(user.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password']).values('uid'))[0]['uid']
-            v.shop_name=data.POST['Shop_Name']
-            v.gst_code=data.POST['GST_Code']
+            v.vid=user
+            v.shop_name=" "
+            v.gst_code=" "
             v.save()
-        '''
+        
         Use=Users.objects.filter(usrname__exact=data.POST['Username']).filter(passwd__exact=data.POST['Password'])
         #print("fuyu")
         s=list(Use.values('uid'))

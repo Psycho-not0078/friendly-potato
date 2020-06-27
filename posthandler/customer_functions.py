@@ -29,11 +29,11 @@ def review(data):
 def set_payment(data):
     status={}
     try:
-        u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
-        cid=u.values('uid')
+        '''u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        cid=u.values('uid')'''
         payment_Dets=data.POST["payment_dets"]
-        n_customer=Customers(cid=cid,payment_dets=payment_Dets)
-        n_customer.save()
+        n_customer=Customers.objects.filter(cid__usrname__exact=data.META.get('HTTP_USERNAME'),cid__passwd__exact=data.META.get('HTTP_PASSWORD'))
+        n_customer.update(payment_dets=payment_Dets)
         status['stat']='success'
     except:
         status['stat']='fail'
@@ -206,10 +206,11 @@ def Mon_order(data):
 def view_Mon_order(data):
     status={}
     try:
-
+        status['stat']="success"
     except :
         status['stat']="error"
-        traceback.print_exc() 
+        traceback.print_exc()
+    return status 
 #         _            _            _      
 #        /\ \         /\ \         /\ \    
 #       /  \ \       /  \ \       /  \ \   

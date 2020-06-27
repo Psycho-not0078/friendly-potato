@@ -40,12 +40,14 @@ def index(request):
                 if headder=='Edit_Profile':#working   
                     response=edit_profile(request)
                     #print(response)
-                elif headder=="":
+                elif headder==" ":
                     response=asdfg()
                 elif headder=="Sign_Out":
                     response=sign_out(request)
                 elif headder=="Verify":
                     response=uverify(request)
+                elif headder=="Shop_Details":
+                    response=set_details(request)
             response.update(stat)
             del response['resp']
         #print(response)
@@ -53,6 +55,14 @@ def index(request):
         #print(res.content)
 
         return res
+    else:
+        print(".__                    .__         .__  .__  _____    _________    __                               .__                   __  .__                                              .__               ")
+        print("|  |__   ______  _  __ |__| ______ |  | |__|/ ____\___\_____   \ _/  |________ ___.__.  __ __  _____|__| ____    ____   _/  |_|  |__   ____   _____  ______ ______        ____ |__|____    ____  ")
+        print("|  |  \ /  _ \ \/ \/ / |  |/  ___/ |  | |  \   __\/ __ \ /   __/ \   __\_  __ <   |  | |  |  \/  ___/  |/    \  / ___\  \   __\  |  \_/ __ \  \__  \ \____ \\____ \     _/ ___\|  \__  \  /  _ \ ")
+        print("|   Y  (  <_> )     /  |  |\___ \  |  |_|  ||  | \  ___/|   |     |  |  |  | \/\___  | |  |  /\___ \|  |   |  \/ /_/  >  |  | |   Y  \  ___/   / __ \|  |_> >  |_> >    \  \___|  |/ __ \(  <_> )")
+        print("|___|  /\____/ \/\_/   |__/____  > |____/__||__|  \___  >___|     |__|  |__|   / ____| |____//____  >__|___|  /\___  /   |__| |___|  /\___  > (____  /   __/|   __/ /\   \___  >__(____  /\____/ ")
+        print("     \/                        \/                     \/<___>                  \/                 \/        \//_____/              \/     \/       \/|__|   |__|    \/       \/        \/        ")
+    
         #return HttpResponse("yooo!!")#first response of nothing (>_<)
 #         _            _            _      
 #        /\ \         /\ \         /\ \    

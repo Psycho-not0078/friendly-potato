@@ -8,7 +8,6 @@ import os
 def daily_cron_job():
     m=MonthlyOrder.objects.all().values()
     try:
-        if()
         dic=list(m)
         for i in range(m.count()):
             a=OrderDetails()
@@ -32,8 +31,8 @@ def daily_cron_job():
                 x.save()
                 z=MonthlyOrder.objects.filter(mid__exact=mid)
                 z.total_cost=z.total_cost+cst 
-                if(list(stock.objects.filter(vid__exact=dic[i]['cid']).filter(iid__exact=iid).values('units'))[0]['units']>0):
-                    q=stock.objects.filter(vid__exact=dic[i]['cid']).filter(iid__exact=iid)
+                if(list(Stock.objects.filter(vid__exact=dic[i]['cid']).filter(iid__exact=iid).values('units'))[0]['units']>0):
+                    q=Stock.objects.filter(vid__exact=dic[i]['cid']).filter(iid__exact=iid)
                     q.units=q.units-qty
                 else:
                     print("error_stock_not_updated")

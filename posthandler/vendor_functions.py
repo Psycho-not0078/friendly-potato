@@ -20,8 +20,8 @@ def asdfg():
 def stock(data):
     status={}
     try:
-        v=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
-        Vid=v.values('Vendor_vid')
+        v=Users.objects.get(usrname__exact=data.META.get('HTTP_USERNAME'))
+        #Vid=v.values('Vendor_vid')
         tnitem=data.POST['Number']
         print(data.POST['Number'])
         dit=dict(data.items())
@@ -32,12 +32,14 @@ def stock(data):
             qty=itm['qty']
             iname=itm['name']
             icompany=itm['company']
-            a=Items.objects.filter(item_name__exact=iname).filter(company__exact=icompany)
+            a=Items.objects.filter(item_name__exact=iname).filter(company__exact=icompany) 
             if(a.count()!=1):
                 desctiption=itm['description']
                 d=Items(name=iname,company=icompany,description=desctiption)
                 d.save()
-            s=Stock(Vendor_vid=Vid,iid=a.values('iid'),units=qty)
+            else:
+                d=Items.objects.get(a.values('iid')[0]['iid'])
+            s=Stock(vid=v,iid=a,units=qty)
             s.save()
         status['stat']='success'
     except :
@@ -100,19 +102,21 @@ def locate(data):
 def set_details(data):
     status={}
     try:
-        v=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
-        vid=u.values('uid')
+        '''v=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
+        vid=v.values('uid')[0]['uid']'''
         description=data.POST["description"]
         gst_code=data.POST["GST_code"]
         acc_details=data.POST["acc_details"]
         shop_name=data.POST["shop_name"]
-        n_vendor=Vendor(vid=cid,desctiption=desctiption,gst_code=gst_code,acc_details=acc_details,shop_name=shop_name)
-        n_vendor.save()
+        n_vendor=Vendor.objects.filter(vid__usrname__exact=data.META.get('HTTP_USERNAME'),vid__passwd__exact=data.META.get('HTTP_PASSWORD'))
+        n_vendor.update(description=description)
+        n_vendor.update(gst_code=gst_code)
+        n_vendor.update(shop_name=shop_name)
         status['stat']='success'
     except:
         status['stat']='fail'
         traceback.print_exc()
-
+    return status
 #         _            _            _      
 #        /\ \         /\ \         /\ \    
 #       /  \ \       /  \ \       /  \ \   

@@ -134,7 +134,7 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Customers(models.Model):
-    cid = models.OneToOneField('Users', models.DO_NOTHING, db_column='Cid', primary_key=True)  # Field name made lowercase.
+    cid = models.OneToOneField('Users', models.DO_NOTHING, db_column='Cid', primary_key=True, related_name="user", related_query_name="user")  # Field name made lowercase.
     payment_dets = models.TextField(db_column='Payment_Dets', blank=True, null=True)  # Field name made lowercase.
     balance = models.FloatField()
 
@@ -211,10 +211,10 @@ class Order(models.Model):
 
 class OrderDetails(models.Model):
     oid = models.AutoField(db_column='Oid', primary_key=True)  # Field name made lowercase.
-    cid = models.IntegerField()
-    vid = models.IntegerField()
+    cid = models.ForeignKey(Customers, models.DO_NOTHING, db_column='cid')
+    vid = models.ForeignKey('Vendor', models.DO_NOTHING, db_column='vid')
     time = models.DateTimeField()
-    did = models.IntegerField(blank=True, null=True)
+    did = models.ForeignKey(DeliveryPersonal, models.DO_NOTHING, db_column='did', blank=True, null=True)
     paymnt_method = models.CharField(max_length=30)
     order_stat = models.CharField(max_length=10)
     total_cost = models.FloatField()
@@ -275,7 +275,7 @@ class Users(models.Model):
 
 
 class Vendor(models.Model):
-    vid = models.OneToOneField(Users, models.DO_NOTHING, db_column='Vid', primary_key=True)  # Field name made lowercase.
+    vid = models.OneToOneField(Users, models.DO_NOTHING, db_column='Vid', primary_key=True, related_name="User", related_query_name="User")  # Field name made lowercase.
     description = models.TextField(blank=True, null=True)
     gst_code = models.CharField(db_column='GST_Code', max_length=15, blank=True, null=True)  # Field name made lowercase.
     acc_dets = models.TextField(db_column='ACC Dets', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
