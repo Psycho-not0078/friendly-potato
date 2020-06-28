@@ -13,13 +13,13 @@ and more.
 This server would accept only post requests.
 the server has a Api Auth system in place 
 
-->The Common User Function are in user_functions.py<br/>
-->The Vendor Functions are in vendor_functions.py<br/>
-->The Customer Functions are in customer_functions.py<br/>
-->There is a cron-job example in daily_cron.py, its nessary settings is in settings.py<br/>
+->The Common User Function are in user_functions.py which includes api auth,sign_in/up,account verification etc<br/>
+->The Vendor Functions are in vendor_functions.py which includes stock taking,viewing incoming orders,etc<br/>
+->The Customer Functions are in customer_functions.py which includes setting up auto payment methods, placing orders, placing a month long daily order list,etc<br/>
+->There is a cron-job example in daily_cron.py, its nessary settings is found in settings.py<br/>
 
 
-# Procedure:
+# Procedure
 1. Execute the sql script named as homestop.sql
 2. Create a user in the sql cl with the credintials as the one mentioned in the settings.py 
 3. Update the port setting in settings.py
@@ -27,4 +27,4 @@ the server has a Api Auth system in place
 2. Execute init.sh for the first time
 3. For the subcequent runs just running runserver.sh is enough
 
-peace
+Peace
