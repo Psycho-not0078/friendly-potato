@@ -8,7 +8,8 @@ The APIs are for a system of customer/vendor apps ,the following tasks are now p
 4. Review
 5. Stock taking
 6. Monthly orders
-and more.<br/>
+and more.
+
 This server would accept only post requests.
 the server has a Api Auth system in place 
 
