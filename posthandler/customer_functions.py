@@ -52,7 +52,7 @@ def order(data):
         tnitem=data.POST['Number']
         dit=dict(data.order())
 
-        temp=OrderDetails.object.latest('time')
+        temp=OrderDetails.objects.latest('time')
         o_id=temp.values('oid')+1 # this to get the order id because order is autoincrement in order table but we need same order id for one order
 
         for i in range(tnitem+1):
@@ -66,14 +66,14 @@ def order(data):
             iid=a.values('iid')
             t_cost=t_cost+(cost*qty) # to update total cost in orderdetail table
 
-            order=Order(oid=o_id,iid=iid,qty=qty)
+            order=Order(oid=OrderDetails.objects.get(oid=o_id),iid=Items.objects.get(iid=iid),qty=qty)
             order.save()
 
-            s=Stock.object.filter(vid__exact=vid).filter(iid_exact=iid)
+            s=Stock.objects.filter(vid_vid__exact=vid).filter(iid_iid_exact=iid)
             s.units=s.values('units')-qty
             s.save()
 
-        order_d=OrderDetails(oid=o_id,cid=c_id,vid=vid,time=datetime.now(),total_cost=t_cost)
+        order_d=OrderDetails(oid=o_id,cid=Customer.objects.get(cid=c_id),vid=Vendor.objects.get(vid=vid),total_cost=t_cost)
         order_d.save()
         status['stat']='success'
 
@@ -87,8 +87,8 @@ def searchv(data):
     status= {}
     try:
         search_element=data.POST['Search_element']
-        a=Users.objects.filter(Vendor__shop_name__contains=search_element)
-        x=list(a.values('lat','lon','address','Vendor__shop_name','phno','Vendor__vid'))
+        a=Vendor.objects.filter(shop_name__contains=search_element)
+        x=list(a.values('vid_lat','vid_lon','vid_address','Vendor__shop_name','vid_phno','Vendor__vid'))
         for i in range(len(x)):
             status[i]=x[i]
     except:
@@ -115,7 +115,7 @@ def view_vendor(data):
             rev=list(d.values('review','rating'))
             cids=list(d.values('cid'))
             for i in range(cnt):
-                n=Users.object.filter(uid__exact=cids[i])
+                n=Users.objects.filter(uid__exact=cids[i])
                 fnm = n.values('fname')
                 mnm = n.values('mname')
                 lnmn = n.values('lname')
@@ -129,7 +129,7 @@ def view_vendor(data):
             item_cost=list(it.values('cost'))
             tem=list(it.values('iid'))
             for i in range(cnt):
-                em=Items.object.filter(iid__exact=tem[i])
+                em=Items.objects.filter(iid__exact=tem[i])
                 item_details=list(em.values())
                 retitems.append(tem[i],item_details,item_cost[i])
             status['returns']=retitems
@@ -149,14 +149,14 @@ def corderview(data):
         o_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
         for i in range(len(o_list)):
             detail={}
-            v=Vendor.object.filter(vid__exact=o_list[i]['vid'])
+            v=Vendor.objects.filter(vid__exact=o_list[i]['vid'])
             ven=list(v.values('Shop_Name'))
             vendor_name=ven[0]['Shop_Name']
-            item_detail=order.object.filter(oid__exact=o_list[i]['oid'])
+            item_detail=order.objects.filter(oid__exact=o_list[i]['oid'])
             item_detail_list=list(item_detail.values())
             item_res={'items':[],'qty':[],'cost':[]}
             for j in range(len(item_detail_list)):
-                temp=Items.object.filter(iid__exact=item_detail_list[j]['iid'])
+                temp=Items.objects.filter(iid__exact=item_detail_list[j]['iid'])
                 l=list(temp.values('Item_Name','Cost','qty'))
                 item_res['items'].append(l[0]['Item_Name'])
                 item_res['qty'].append(item_detail_list[j]['qty'])
@@ -184,8 +184,8 @@ def Mon_order(data):
         uid=list(u.values('uid'))[0]['uid']
         shp_name=data.POST['Shop_Name']
         q=MonthlyOrder()
-        q.cid=uid
-        q.vid=list(Vendor.objects.filter(shop_name__exact=shp_name).values())[0]['shop_name']
+        q.cid=Customer.objects.get(cid=uid)
+        q.vid=Vendor.objects.get(vid=list(Vendor.objects.filter(shop_name__exact=shp_name).values())[0]['vid'])
         q.total_cost=0
         q.save()
         for i in range(tnit):
@@ -193,10 +193,10 @@ def Mon_order(data):
             current_item="Item_"+str(i+1)
             qwerty=data.POST[current_item]
             QWERTY=json.load(qwerty)
-            o=order()
-            o.iid=list(Items.objects.filter(item_name__exact=QWERTY['item_name']).filter(company__exact=QWERTY['item_company']).values('iid'))[0]['iid']
-            o.qty=QWERTY['qty']
-            o.save()
+            oq=Order()
+            oq.iid=Items.objects.get(iid=list(Items.objects.filter(item_name__exact=QWERTY['item_name']).filter(company__exact=QWERTY['item_company']).values('iid'))[0]['iid'])
+            oq.qty=QWERTY['qty']
+            oq.save()
 
     except :
         status['stat']="error"

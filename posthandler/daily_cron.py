@@ -20,11 +20,11 @@ def daily_cron_job():
 
             mid=dic[i]['mid']
             for j in range(Morder.objects.filter(mid__exact=mid).count()):
-                oid=list(OrderDetails.objects.latest('time').values('oid'))[0]['oid']
+                #oid=(list(OrderDetails.objects.latest('time').values('oid'))[0]['oid']+
                 x=Order()
-                x.oid=oid
-                qty=list(Morder.objects.filter(mid__exact=mid).values('qty'))[i]['mid']
-                iid=list(Morder.objects.filter(mid__exact=mid).values('iid'))[i]['iid']
+                x.oid=a
+                qty=list(Morder.objects.filter(mid__exact=mid).values('qty'))[i]['qty']
+                iid=Items.objects.get(iid=list(Morder.objects.filter(mid__exact=mid).values('iid'))[i]['iid'])
                 x.qty=qty
                 cst=qty*((list(Items.objects.filter(iid__exact=iid).values('cost')))[0]['cost'])
                 x.iid=iid

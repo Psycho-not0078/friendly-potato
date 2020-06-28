@@ -56,14 +56,14 @@ def vorderview(data):
         order_list=list(order.values('oid','cid','time','did','paymnt_method','order_stat','total_cost'))
         for i in range(len(order_list)):
             detail={}
-            ven=user.object.filter(vid__exact=order_list[i]['cid'])
+            ven=user.objects.filter(vid__exact=order_list[i]['cid'])
             user=list(ven.values('Usrname'))
             user_name=ven[0]['Usrname']
-            item_detail=order.object.filter(oid__exact=order_list[i]['oid'])#selet * into #temp from ord where oid=oid
+            item_detail=order.objects.filter(oid__exact=order_list[i]['oid'])#selet * into #temp from ord where oid=oid
             item_detail_list=list(item_detail.values('iid'))#selet * from #temp      select iid from temp
             item_res={'items':[],'qty':[],'cost':[]}
             for j in range(len(item_detail_list)):
-                temp=Items.object.filter(iid__exact=item_detail_list[j])
+                temp=Items.objects.filter(iid__exact=item_detail_list[j])
                 l=list(temp.values())
                 item_res['items'].append(l[0]['Item_Name'])
                 item_res['qty'].append(item_detail_list[j]['qty'])
@@ -108,6 +108,7 @@ def set_details(data):
         gst_code=data.POST["GST_code"]
         acc_details=data.POST["acc_details"]
         shop_name=data.POST["shop_name"]
+        #print(Vendor.objects.all().values('vid'))
         n_vendor=Vendor.objects.filter(vid__usrname__exact=data.META.get('HTTP_USERNAME'),vid__passwd__exact=data.META.get('HTTP_PASSWORD'))
         n_vendor.update(description=description)
         n_vendor.update(gst_code=gst_code)

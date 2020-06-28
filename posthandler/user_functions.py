@@ -34,13 +34,14 @@ def APIfunct(data,string1):#working
         status=sign_in(data)
     elif(headder=="Sign_Up"):
         status=sign_up(data)
+    elif(headder=="Verify_acc"):
+        status=uverify(data)
     return status
 
 def verify(data):#working
     status= {}
     try:
-        #print("running")
-        #print(data.META.get('HTTP_USERNAME'))
+
         u=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
         print(u.values())
         ptext=base64.b64decode(u.values('pt')[0]['pt'])
@@ -49,37 +50,22 @@ def verify(data):#working
         mode = AES.MODE_CBC
         cipher = AES.new(key, mode ,iv)
         hash=cipher.decrypt(base64.b64decode((data.META.get('HTTP_CIPHER'))))
-        #print(type(key))
-        #print(key)
 
-        #print(data.META)
-        #print(base64.b64encode(hash).decode('utf-8'))
-        #print(base64.b64encode(ptext).decode('utf-8'))
-        #print(base64.b64encode(hash).decode('utf-8'))
-        #print(data.META)
         time_old=u.values('updated_time')[0]['updated_time']
-        #print(type(time_old))
-        #print(time_old)
-        #print(datetime.now(timezone.utc))
 
-        #print("asdfghjk")
         if(base64.b64encode(hash).decode('utf-8')==base64.b64encode(ptext).decode('utf-8')):
-            #print("asdg")
-            #print((datetime.now(timezone.utc)-time_old)<time_10mins)
-            #print((datetime.now(timezone.utc)-time_old))
-            time_old=u.values('updated_time')[0]['updated_time']
             time_10mins=timedelta(minutes=10)
+
             f=(datetime.now(timezone.utc)-time_old)
-            #print(f/timedelta(minutes=1))
+            '''print(f)
+            print()'''
             if (abs(f/timedelta(minutes=1))<(10*60)):#condition to check time pased
-                #print("still running")
                 user=Users.objects.filter(usrname__exact=data.META.get('HTTP_USERNAME')).filter(passwd__exact=data.META.get('HTTP_PASSWORD'))
                 user.update(updated_time=datetime.now())
                 status['resp']="success"
                 status['status']='verified'
             else:
                 status['hash']=renew(data)
-                #print("nah")
                 if(status['hash']=='fail'):
                     del status['hash']
                     status['resp']="fail"
