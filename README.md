@@ -1,18 +1,22 @@
 # friendly-potato
-django server for a serving APIs forapp
+example of a django server for a serving APIs 
 
-The APIs are for the following tasks:
+The APIs are for a system of customer/vendor apps ,the following tasks are now possible:
 1. Sign in
 2. Sign up
 3. Order
 4. Review
 5. Stock taking
 6. Monthly orders
-and more.
+and more.<br/>
 This server would accept only post requests.
 the server has a Api Auth system in place 
 
-Make sure that nessary port forwarding is enabled for the server to be accessed from multiple networks.
+->The Common User Function are in user_functions.py<br/>
+->The Vendor Functions are in vendor_functions.py<br/>
+->The Customer Functions are in customer_functions.py<br/>
+->There is a cron-job example in daily_cron.py, its nessary settings is in settings.py<br/>
+
 
 # Procedure:
 1. Execute the sql script named as homestop.sql
