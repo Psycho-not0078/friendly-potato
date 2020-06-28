@@ -2,18 +2,23 @@
 django server for a serving APIs for homestop app
 
 The APIs are for the following tasks:
-1)sign in
-2)sign up
-3)order
-4)review
-5)stock
+1. Sign in
+2. Sign up
+3. Order
+4. Review
+5. Stock taking
+6. Monthly orders
 and more.
 This server would accept only post requests.
 
 Make sure that nessary port forwarding is enabled for the server to be accessed from multiple networks.
 
-Procedure:
-1. Execute init.sh for the first time
-2. for the subcequent runs just running runserver.sh is enough
+# Procedure:
+1. Execute the sql script named as homestop.sql
+2. Create a user in the sql cl with the credintials as the one mentioned in the settings.py 
+3. Update the port setting in settings.py
+4. Check the nessary port fowarding settings
+2. Execute init.sh for the first time
+3. For the subcequent runs just running runserver.sh is enough
 
 peace
