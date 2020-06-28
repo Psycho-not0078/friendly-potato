@@ -1,5 +1,5 @@
 # friendly-potato
-django server for a serving APIs for homestop app
+django server for a serving APIs forapp
 
 The APIs are for the following tasks:
 1. Sign in
@@ -10,6 +10,7 @@ The APIs are for the following tasks:
 6. Monthly orders
 and more.
 This server would accept only post requests.
+the server has a Api Auth system in place 
 
 Make sure that nessary port forwarding is enabled for the server to be accessed from multiple networks.
 
